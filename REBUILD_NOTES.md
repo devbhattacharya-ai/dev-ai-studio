@@ -83,6 +83,14 @@ Restored from live sources into rebuild (no redesign):
 - Entrance keyframes kept: disperse uses CSS `translate` (composes with animated `transform`).
 - No Lenis/GSAP.
 
+
+## Scroll section fade-up (2026-10-01)
+
+- Home only: IntersectionObserver + `.reveal` / `.reveal.is-in` (opacity 0→1, translateY 24px→0, ~0.7s).
+- Targets: `#about` `.section-meta` + `.intro-copy`; `#work` each `.work-card`; `#services` meta, heading, subhead, each `.service-row`.
+- Styles apply only under `[data-motion="on"]` + `prefers-reduced-motion: no-preference`; Pause / reduced → static visible.
+- Observe once (unobserve after in-view). No GSAP/Lenis. Hero H1 disperse unchanged.
+
 ## Not done (by brief)
 
 - No GitHub push

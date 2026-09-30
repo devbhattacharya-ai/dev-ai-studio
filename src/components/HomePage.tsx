@@ -181,7 +181,84 @@ function IridescentOrb() {
   );
 }
 
+
+/** Scroll fade-up once — intro / work cards / services. Gated by data-motion + reduced-motion via CSS. */
+function useScrollReveal() {
+  useEffect(() => {
+    const nodes = Array.from(
+      document.querySelectorAll<HTMLElement>(".reveal"),
+    );
+    if (!nodes.length) return;
+
+    const motionAllowed = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return false;
+      }
+      return document.documentElement.dataset.motion === "on";
+    };
+
+    const markIn = (el: Element) => {
+      el.classList.add("is-in");
+      observer.unobserve(el);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) markIn(entry.target);
+        }
+      },
+      { threshold: 0.14, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    /** When motion turns on, immediately reveal already-visible targets (avoid opacity flash). */
+    const flushVisible = () => {
+      const vh = window.innerHeight;
+      for (const el of nodes) {
+        if (el.classList.contains("is-in")) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < vh * 0.94 && rect.bottom > 0) markIn(el);
+      }
+    };
+
+    const sync = () => {
+      if (!motionAllowed()) {
+        /* Static: ensure visible; keep observing for later resume */
+        flushVisible();
+        return;
+      }
+      for (const el of nodes) {
+        if (!el.classList.contains("is-in")) observer.observe(el);
+      }
+      flushVisible();
+    };
+
+    for (const el of nodes) observer.observe(el);
+
+    const mo = new MutationObserver(sync);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
+    const frame = document.querySelector(".site-frame");
+    if (frame) {
+      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
+    }
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    mq.addEventListener("change", sync);
+    sync();
+
+    return () => {
+      mo.disconnect();
+      mq.removeEventListener("change", sync);
+      observer.disconnect();
+    };
+  }, []);
+}
+
 export function HomePage() {
+  useScrollReveal();
   return (
     <div className="site-frame" id="top" data-language="en" data-motion="off">
       <a className="skip-link" href="#main-content">
@@ -222,7 +299,7 @@ export function HomePage() {
         </section>
 
         <section id="about" className="page-shell section-space intro-section">
-          <div className="section-meta">
+          <div className="section-meta reveal">
             <p className="label" style={{ whiteSpace: "pre-line" }}>
               {HOME.about.label}
             </p>
@@ -231,7 +308,7 @@ export function HomePage() {
               <ArrowUpRight />
             </a>
           </div>
-          <div className="intro-copy">
+          <div className="intro-copy reveal">
             <h2>{HOME.about.h2}</h2>
             <p>{HOME.about.body}</p>
           </div>
@@ -254,7 +331,7 @@ export function HomePage() {
               <Link
                 key={card.slug}
                 href={`/work/${card.slug}`}
-                className="work-card"
+                className="work-card reveal"
                 aria-label={`Read case study: ${card.title}`}
               >
                 <div className="work-card-visual">
@@ -292,19 +369,19 @@ export function HomePage() {
         </section>
 
         <section id="services" className="page-shell section-space services-section">
-          <div className="section-meta">
+          <div className="section-meta reveal">
             <p className="label">{HOME.services.meta}</p>
             <span className="label">{HOME.services.metaSide}</span>
           </div>
-          <h2 className="display-heading">
+          <h2 className="display-heading reveal">
             {HOME.services.h2[0]}
             <br />
             {HOME.services.h2[1]}
           </h2>
-          <p className="services-subhead">{HOME.services.subhead}</p>
+          <p className="services-subhead reveal">{HOME.services.subhead}</p>
           <div className="service-rows">
             {HOME.services.tiers.map((tier) => (
-              <article className="service-row" key={tier.name}>
+              <article className="service-row reveal" key={tier.name}>
                 <p className="label">{tier.number}</p>
                 <div>
                   <h3>{tier.name}</h3>

@@ -1835,6 +1835,42 @@ button {
   transform: none !important;
 }
 
+
+/* ——— Scroll fade-up (intro / work cards / services) ——— */
+/* Hidden only when motion is on; Pause + reduced-motion → normal static layout */
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="on"] .reveal:not(.is-in) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  [data-motion="on"] .reveal {
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  [data-motion="on"] .reveal.is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-motion="off"] .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* Hero H1 disperse — static when motion paused */
 [data-motion="off"] .hero-title .hero-character {
   translate: none !important;
