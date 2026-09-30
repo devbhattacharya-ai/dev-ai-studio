@@ -134,11 +134,12 @@ export function ProjectGuideFab() {
         href={WA_PRIMARY}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={HOME.waChip}
         aria-hidden={!chipVisible}
         tabIndex={chipVisible ? 0 : -1}
       >
-        <MessageCircle size={16} />
-        <span>{HOME.waChip}</span>
+        <MessageCircle size={18} aria-hidden="true" />
+        <span className="wa-chip-label">{HOME.waChip}</span>
       </a>
 
       <a
