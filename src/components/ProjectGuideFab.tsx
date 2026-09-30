@@ -150,9 +150,10 @@ export function ProjectGuideFab() {
         href={WA_PRIMARY}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={HOME.fab}
       >
         <MessageCircle />
-        <span>{HOME.fab}</span>
+        <span className="assistant-fab-label">{HOME.fab}</span>
       </a>
     </>
   );
