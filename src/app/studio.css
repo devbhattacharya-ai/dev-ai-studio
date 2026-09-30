@@ -1901,42 +1901,59 @@ button {
     padding: 20px;
   }
 
+  /* Clear fixed chrome so hero CTAs aren’t covered (~390px) */
+  .hero-bottom {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-frame {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
   .motion-toggle,
   .assistant-fab {
-    bottom: 16px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
 
   .motion-toggle {
-    left: 14px;
+    left: max(12px, env(safe-area-inset-left, 0px));
+    min-height: 40px;
+    padding: 7px 10px;
+    font-size: 11px;
   }
 
   .assistant-fab {
-    right: 14px;
+    right: max(12px, env(safe-area-inset-right, 0px));
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 14px;
+    gap: 8px;
   }
 
+  /* Mid-page WA chip + FAB feel crowded on phone — FAB already is 1-tap WhatsApp */
   .wa-chip {
-    bottom: 72px;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    max-width: 36px;
-    min-height: 36px;
-    max-height: 36px;
-    font-size: 12px;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .wa-chip:hover,
-    .wa-chip:focus-visible {
-      height: 36px;
-      min-height: 36px;
-      max-height: 36px;
-      max-width: none;
-    }
+    display: none !important;
   }
 
   .pricing-line-price {
     white-space: normal;
+  }
+}
+
+@media (width <= 420px) {
+  /* Tighter sticky chrome; keep single WhatsApp FAB (≤2 taps) */
+  .hero-bottom {
+    padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .assistant-fab {
+    max-width: min(52vw, 200px);
+  }
+
+  .assistant-fab span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

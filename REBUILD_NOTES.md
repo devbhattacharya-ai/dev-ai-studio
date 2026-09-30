@@ -104,3 +104,7 @@ npm install
 npm run build
 npm run dev
 ```
+
+## Mobile sticky chrome (390px)
+- Extra `.hero-bottom` / `.site-frame` padding so fixed controls do not cover hero CTAs.
+- Hide mid-page `.wa-chip` at ≤760px; keep “Plan your project” FAB as the sticky WhatsApp path (1 tap).
