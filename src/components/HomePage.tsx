@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HOME } from "@/lib/content";
@@ -10,11 +11,61 @@ import { GhostLink } from "./GhostLink";
 import { FaqAccordion } from "./FaqAccordion";
 import { AutomationDemo } from "./AutomationDemo";
 import { ProjectGuideFab } from "./ProjectGuideFab";
-import { ArrowUpRight } from "./Icons";
+import { ArrowUpRight, ArrowDown } from "./Icons";
+
+function HeroTitle({ lines }: { lines: readonly string[] }) {
+  const label = lines.join(" ");
+  let charIndex = 0;
+  return (
+    <h1 id="hero-title" className="hero-title" aria-label={label}>
+      {lines.map((line, lineIndex) => {
+        const chars = Array.from(line);
+        const start = charIndex;
+        charIndex += chars.length;
+        return (
+          <span
+            key={lineIndex}
+            className={`hero-line hero-line-${lineIndex}`}
+            aria-hidden="true"
+          >
+            <span className="hero-line-mask">
+              {chars.map((ch, i) => (
+                <span
+                  key={i}
+                  className="hero-character"
+                  style={{ "--char-i": start + i } as CSSProperties}
+                >
+                  {ch === " " ? "\u00A0" : ch}
+                </span>
+              ))}
+            </span>
+          </span>
+        );
+      })}
+    </h1>
+  );
+}
+
+function IridescentOrb() {
+  return (
+    <div className="hero-orbit" aria-hidden="true">
+      <span className="orbit-ring ring-outer" />
+      <span className="orbit-ring ring-inner" />
+      <div className="orb-scroll">
+        <div className="orb-pointer">
+          <div className="orb-surface">
+            <span className="iridescent-sphere" />
+            <span className="sphere-sheen" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function HomePage() {
   return (
-    <div className="site-frame" id="top" data-language="en">
+    <div className="site-frame" id="top" data-language="en" data-motion="off">
       <a className="skip-link" href="#main-content">
         {HOME.skip}
       </a>
@@ -26,23 +77,17 @@ export function HomePage() {
             <p className="label hero-location">{HOME.hero.location}</p>
           </div>
           <div className="hero-stage">
-            <div className="hero-orbit" aria-hidden="true">
-              <span className="ring-outer" />
-              <span className="ring-inner" />
-              <span className="iridescent-sphere" />
-            </div>
-            <h1 className="hero-title">
-              <span className="hero-line">{HOME.hero.lines[0]}</span>
-              <span className="hero-line hero-line-2">{HOME.hero.lines[1]}</span>
-              <span className="hero-line">{HOME.hero.lines[2]}</span>
-            </h1>
+            <IridescentOrb />
+            <HeroTitle lines={HOME.hero.lines} />
+            <span className="hero-coordinate label" aria-hidden="true">
+              {HOME.hero.coordinate}
+            </span>
           </div>
           <div className="hero-bottom">
             <div>
-              <p className="label">{HOME.hero.coordinate}</p>
-              <a className="ghost-link underlined" href="#work">
+              <a className="ghost-link hero-work underlined" href="#work">
                 {HOME.hero.ctaWork}
-                <ArrowUpRight />
+                <ArrowDown />
               </a>
             </div>
             <div>
@@ -53,7 +98,7 @@ export function HomePage() {
             </div>
             <a className="scroll-indicator label" href="#about">
               {HOME.hero.scroll}
-              <span aria-hidden="true">↓</span>
+              <ArrowDown size={18} />
             </a>
           </div>
         </section>
@@ -248,6 +293,12 @@ export function HomePage() {
               {HOME.contact.h2[2]}
             </h2>
             <div className="contact-aside">
+              <div className="contact-mark" aria-hidden="true">
+                <span className="contact-colour">
+                  <span className="iridescent-sphere" />
+                  <span className="sphere-sheen" />
+                </span>
+              </div>
               <p>{HOME.contact.body}</p>
               <GhostLink href={WA_PRIMARY} className="contact-whatsapp underlined" external>
                 {HOME.contact.ctaWhatsapp}

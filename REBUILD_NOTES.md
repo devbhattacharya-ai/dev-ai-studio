@@ -44,8 +44,9 @@ Applied from `P0-IA-PACK.md` § UX change list:
 
 - Tokens from `/workspace/studio-portfolio-visual/tokens.css` imported as source of truth.
 - Parchment `#e5e4e0` / ink `#1d1d1d` / paper / ash / stone / muted; radius 10px; page-width 1400px; Inter + Noto Sans Devanagari (next/font).
-- Iridescent sphere decorative element on hero.
-- Sticky motion toggle (left) + Plan your project FAB (right → WhatsApp).
+- Iridescent orb: live markup (`.orb-scroll` / `.orb-pointer` / `.orb-surface` / `.iridescent-sphere` + `.sphere-sheen`) with sheen pulse + pointer parallax.
+- Hero character-split title + vertical `.hero-coordinate`; contact clover mark reuses sphere/sheen.
+- Sticky motion toggle (left) pauses/resumes decorative motion site-wide via `data-motion`; Plan your project FAB (right → WhatsApp).
 
 ## Language
 
@@ -53,13 +54,24 @@ Applied from `P0-IA-PACK.md` § UX change list:
 
 ## Gaps vs live site
 
-1. **Motion / scroll choreography** — live uses heavier line masks, rolling nav labels, pricing reveal/count-up; rebuild uses static layout + reduced-motion respect without full Lenis/scroll theatre.
-2. **Hero character-split animation** — title is line-stacked, not per-glyph masked motion.
+1. **Lenis / sticky hero scrub / depth-scene theatre** — live GSAP ScrollTrigger sticky hero (190svh), depth tiles, section reveals, pricing count-up still not ported; decorative CSS + pause control restored instead (see `MOTION_GAP.md`).
+2. **Rolling nav labels / studio custom cursor** — omitted (chrome nicety; not core sphere/pause motion Dev reported).
 3. **Marathi content** — not shipped; toggle hidden.
 4. **Project-guide dialog** — intentionally removed (UX delta #1); FAB goes straight to WhatsApp.
 5. **External concept demos** — linked only with local screenshot fallback (UX delta #5).
 6. **metadataBase** — Next warns until production URL is set (parent deploy).
 7. **Appendix strings** (CLEAR SCOPE / unused bullets / old homepage variants) intentionally **not** used per copy pack.
+
+## Motion restore (2026-10-01)
+
+Restored from live sources into rebuild (no redesign):
+
+- Orb nesting + `.sphere-sheen` opacity pulse (4s alternate) matching live GSAP values.
+- Hero glyph masks + CSS entrance stagger; vertical coordinate; scroll-prompt bounce on indicator SVG.
+- Contact clover `.contact-mark` with shared sphere/sheen.
+- Sticky **Pause / Resume motion** sets `data-motion` on `html` + `.site-frame`; gates all decorative animations; respects `prefers-reduced-motion`.
+- Soft `.orb-pointer` cursor parallax when motion is on (fine pointer only).
+- Details: `/workspace/dev-ai-studio/MOTION_GAP.md`.
 
 ## Not done (by brief)
 
