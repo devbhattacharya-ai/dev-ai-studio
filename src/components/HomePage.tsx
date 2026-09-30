@@ -44,6 +44,10 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
     });
 
     let raf = 0;
+    let running = false;
+    let targetP = 0;
+    let currentP = 0;
+    const LERP = 0.14;
 
     const motionAllowed = () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -62,6 +66,8 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
         el.style.translate = "";
         el.style.opacity = "";
       });
+      currentP = 0;
+      targetP = 0;
     };
 
     const applyDisperse = (progress: number) => {
@@ -85,21 +91,39 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
       });
     };
 
-    const tick = () => {
-      raf = 0;
-      if (!motionAllowed()) {
-        clearDisperse();
-        return;
-      }
+    const readTarget = () => {
       const rect = hero.getBoundingClientRect();
       const height = Math.max(rect.height, 1);
-      /* 0 at hero top in view; 1 when hero fully scrolled out */
-      const progress = Math.min(1, Math.max(0, -rect.top / height));
-      applyDisperse(progress);
+      targetP = Math.min(1, Math.max(0, -rect.top / height));
+    };
+
+    const loop = () => {
+      if (!running) return;
+      if (!motionAllowed()) {
+        clearDisperse();
+        running = false;
+        raf = 0;
+        return;
+      }
+      readTarget();
+      currentP += (targetP - currentP) * LERP;
+      if (Math.abs(targetP - currentP) < 0.0008) currentP = targetP;
+      applyDisperse(currentP);
+      raf = requestAnimationFrame(loop);
     };
 
     const schedule = () => {
-      if (!raf) raf = requestAnimationFrame(tick);
+      if (!motionAllowed()) {
+        clearDisperse();
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        return;
+      }
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(loop);
+      }
     };
 
     const mo = new MutationObserver(schedule);
@@ -119,6 +143,7 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
     schedule();
 
     return () => {
+      running = false;
       mo.disconnect();
       mq.removeEventListener("change", schedule);
       window.removeEventListener("scroll", schedule);
@@ -167,14 +192,19 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
 function IridescentOrb() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  /* Scroll-linked rotation on .orb-scroll — composes with .orb-pointer parallax;
-     sheen pulse stays on .sphere-sheen via CSS. Gated by data-motion + reduced-motion. */
+  /* Soft scroll-linked rotation — lerp toward target (not 1:1 scroll).
+     Composes with .orb-pointer parallax; sheen stays on .sphere-sheen. */
   useEffect(() => {
     const scrollEl = scrollRef.current;
     const hero = scrollEl?.closest("section.hero");
     if (!scrollEl || !(hero instanceof HTMLElement)) return;
 
     let raf = 0;
+    let running = false;
+    let targetDeg = 0;
+    let currentDeg = 0;
+    const MAX_DEG = 180;
+    const LERP = 0.12;
 
     const motionAllowed = () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -185,27 +215,47 @@ function IridescentOrb() {
 
     const clearRotation = () => {
       scrollEl.style.transform = "";
+      currentDeg = 0;
+      targetDeg = 0;
     };
 
-    const tick = () => {
-      raf = 0;
-      if (!motionAllowed()) {
-        clearRotation();
-        return;
-      }
+    const readTarget = () => {
       const rect = hero.getBoundingClientRect();
       const height = Math.max(rect.height, 1);
-      /* 0 at hero top in view; 1 when hero fully scrolled out — same axis as H1 disperse */
       const progress = Math.min(1, Math.max(0, -rect.top / height));
-      const deg = progress * 270;
-      scrollEl.style.transform = `rotate(${deg.toFixed(2)}deg)`;
+      targetDeg = progress * MAX_DEG;
     };
 
-    const schedule = () => {
-      if (!raf) raf = requestAnimationFrame(tick);
+    const loop = () => {
+      if (!running) return;
+      if (!motionAllowed()) {
+        clearRotation();
+        running = false;
+        raf = 0;
+        return;
+      }
+      readTarget();
+      currentDeg += (targetDeg - currentDeg) * LERP;
+      if (Math.abs(targetDeg - currentDeg) < 0.05) currentDeg = targetDeg;
+      scrollEl.style.transform = `rotate(${currentDeg.toFixed(2)}deg)`;
+      raf = requestAnimationFrame(loop);
     };
 
-    const mo = new MutationObserver(schedule);
+    const ensureLoop = () => {
+      if (!motionAllowed()) {
+        clearRotation();
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        return;
+      }
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(loop);
+      }
+    };
+
+    const mo = new MutationObserver(ensureLoop);
     mo.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-motion"],
@@ -216,16 +266,17 @@ function IridescentOrb() {
     }
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mq.addEventListener("change", schedule);
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule, { passive: true });
-    schedule();
+    mq.addEventListener("change", ensureLoop);
+    window.addEventListener("scroll", ensureLoop, { passive: true });
+    window.addEventListener("resize", ensureLoop, { passive: true });
+    ensureLoop();
 
     return () => {
+      running = false;
       mo.disconnect();
-      mq.removeEventListener("change", schedule);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      mq.removeEventListener("change", ensureLoop);
+      window.removeEventListener("scroll", ensureLoop);
+      window.removeEventListener("resize", ensureLoop);
       if (raf) cancelAnimationFrame(raf);
       clearRotation();
     };
