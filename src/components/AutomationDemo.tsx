@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HOME } from "@/lib/content";
 import { waDemo } from "@/lib/links";
 import { GhostLink } from "./GhostLink";
@@ -12,6 +12,17 @@ export function AutomationDemo() {
   const tree = HOME.demo.trees[scenario];
   const done = answers.length === tree.length;
   const choices = answers.map((idx, step) => tree[step].choices[idx]);
+  const actionRef = useRef<HTMLDivElement>(null);
+
+  /* Keep keyboard focus inside the demo after each step (buttons remount). */
+  useEffect(() => {
+    const root = actionRef.current;
+    if (!root) return;
+    const focusable = root.querySelector<HTMLElement>(
+      'button:not([disabled]), a[href]',
+    );
+    focusable?.focus();
+  }, [answers, scenario, done]);
 
   return (
     <section
@@ -98,7 +109,7 @@ export function AutomationDemo() {
               </div>
             ))}
             {done ? (
-              <div className="conversation-handoff">
+              <div className="conversation-handoff" ref={actionRef}>
                 <p className="label">{HOME.demo.handoffLabel}</p>
                 <h3>{HOME.demo.handoffH3}</h3>
                 <ul>
@@ -117,7 +128,7 @@ export function AutomationDemo() {
                 <p className="cta-note">{HOME.demo.ctaNote}</p>
               </div>
             ) : (
-              <div className="conversation-options">
+              <div className="conversation-options" ref={actionRef}>
                 {tree[answers.length].choices.map((choice, idx) => (
                   <button
                     key={choice}

@@ -277,7 +277,8 @@ export const CASE_CHROME = {
     "Open the original website on your phone or desktop to explore the layout and interactions.",
   exploreLive: "View live website",
   exploreLiveSr: " (opens in a new tab)",
-  liveFallback: "Preview only — live demo unavailable",
+  liveFallback:
+    "Preview only — the external live demo may be unavailable or protected (e.g. HTTP 401). Use the screenshot above.",
   exploreDemo: "Try the automation demo →",
   outcomeLabel: "04 / EXPECTED OUTCOME",
   outcomeH: "A clear goal. An honest baseline.",
