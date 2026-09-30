@@ -1,0 +1,246 @@
+/**
+ * Studio portfolio design tokens — extracted from live site
+ * https://dev-ai-web-automation.dev2404.chatgpt.site/
+ * CSS: /assets/index-DG47cdtV.css
+ *
+ * MATCH LIVE / NO REDESIGN — do not invent new brand values.
+ * Import in Next.js (e.g. app/globals.css): @import "./tokens.css";
+ */
+
+:root {
+  /* ——— Color ——— */
+  --parchment: #e5e4e0;
+  --ink: #1d1d1d;
+  --paper: #ffffff;
+  --ash: #bfbebe;
+  --stone: #cdcdc9;
+  --muted: #53534f;
+  --note: #494844; /* demo disclaimer / case-note */
+  --outcomes-rule: #acaca7;
+  --tag-sep: #777777;
+
+  --background: var(--parchment);
+  --foreground: var(--ink);
+  --border: var(--ash);
+  --input: var(--ash);
+  --ring: var(--ink);
+  --muted-foreground: var(--muted);
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  /* Decorative sphere only — not UI chrome */
+  --sphere-yellow: #facb0e;
+  --sphere-pink: #f06ba8;
+  --sphere-blue: #78bae6;
+  --sphere-gradient: linear-gradient(
+    255deg,
+    var(--sphere-yellow),
+    var(--sphere-pink) 30%,
+    var(--sphere-blue) 65%,
+    #ffffff
+  );
+
+  --overlay-dialog: #1d1d1d59;
+  --shadow-work-hover: 0 14px 30px #1d1d1d13;
+
+  /* ——— Typography ——— */
+  --font-studio: "Inter", "Noto Sans Devanagari", Arial, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-body: 1.4; /* live body */
+
+  --tracking-tight: -0.025em;
+  --tracking-display: -0.047em;
+  --tracking-hero: -0.06em;
+  --tracking-widest: 0.1em;
+  --tracking-label: 0.05em;
+
+  /* Display clamps (EN — override for mr) */
+  --text-hero: clamp(80px, 8.5vw, 126px);
+  --text-hero-lh: 0.88;
+  --text-display: clamp(42px, 5.2vw, 76px);
+  --text-display-lh: 0.93;
+  --text-work-heading: clamp(46px, 5.4vw, 78px);
+  --text-contact: clamp(64px, 7.38vw, 103px);
+  --text-work-card-title: clamp(27px, 3vw, 42px);
+  --text-service-h3: clamp(28px, 3vw, 46px);
+  --text-label: 11px;
+  --text-nav: 15px;
+  --text-ghost-link: 15px;
+  --text-brand: 13px;
+  --text-brand-symbol: 48px;
+
+  /* ——— Layout / spacing ——— */
+  --spacing: 0.25rem;
+  --page-width: 1400px;
+  --gutter: clamp(24px, 4.2vw, 64px);
+  --section-gap: clamp(76px, 8.3vw, 119px);
+  --header-min-height: 96px;
+  --hero-stage-min-height: 505px;
+  --touch-min: 44px;
+
+  /* ——— Radii ——— */
+  --radius: 10px;
+  --radius-badge: 6px;
+  --radius-currency-pill: 7px;
+  --radius-dialog: 0;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* ——— Motion ——— */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-transition-duration: 0.15s;
+  --duration-fab: 0.2s;
+  --duration-ghost-icon: 0.25s;
+  --duration-work: 0.45s;
+  --duration-currency: 0.16s;
+
+  color-scheme: light;
+}
+
+/* Page shell helper (mirrors live .page-shell) */
+.page-shell {
+  width: min(calc(100% - var(--gutter) * 2), var(--page-width));
+  margin-inline: auto;
+}
+
+/* Body defaults from live */
+body {
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--font-studio);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Label / eyebrow */
+.label {
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-size: var(--text-label);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Primary CTA pattern */
+.ghost-link {
+  letter-spacing: 0.01em;
+  text-align: left;
+  border-radius: var(--radius);
+  justify-content: space-between;
+  align-items: center;
+  gap: 19px;
+  min-height: var(--touch-min);
+  padding: 5px 0;
+  font-size: var(--text-ghost-link);
+  display: inline-flex;
+}
+
+.ghost-link:hover {
+  text-underline-offset: 5px;
+  text-decoration: underline;
+}
+
+.ghost-link svg {
+  transition: transform var(--duration-ghost-icon) var(--ease);
+}
+
+.ghost-link:hover svg {
+  transform: translate(3px, -2px);
+}
+
+.display-heading {
+  letter-spacing: var(--tracking-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display-lh);
+}
+
+.section-space {
+  margin-top: var(--section-gap);
+}
+
+/* Breakpoint token mirrors (use in @media) */
+@media (width <= 1100px) {
+  :root {
+    --header-min-height: 94px;
+    --hero-stage-min-height: 440px;
+    --text-hero: clamp(60px, 7.7vw, 90px);
+  }
+}
+
+@media (width <= 760px) {
+  :root {
+    --gutter: 24px;
+    --header-min-height: 90px;
+    --hero-stage-min-height: 390px;
+    --text-hero: clamp(39px, 8.55vw, 64px);
+    --text-hero-lh: 0.9;
+    --text-brand: 11px;
+    --text-brand-symbol: 40px;
+  }
+}
+
+@media (width <= 380px) {
+  :root {
+    --gutter: 19px;
+    --hero-stage-min-height: 345px;
+    --text-brand: 10px;
+  }
+}
+
+@media (width >= 1500px) {
+  :root {
+    --hero-stage-min-height: 560px;
+  }
+}
+
+/* Marathi type loosening (apply on [data-language="mr"] root) */
+[data-language="mr"] {
+  --tracking-hero: -0.02em;
+  --tracking-display: -0.025em;
+  --text-hero: clamp(52px, 7vw, 96px);
+  --text-hero-lh: 1.15;
+  --text-display: clamp(36px, 4.6vw, 66px);
+  --text-display-lh: 1.22;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
