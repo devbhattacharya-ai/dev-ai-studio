@@ -1942,48 +1942,25 @@ button {
     padding: 20px;
   }
 
-  /* Strong mobile sticky chrome: hide Pause, icon-only Plan FAB (1-tap WA) */
+  /* Phone sticky chrome: no Pause, no Plan FAB — in-page wa.me + tel stay 1-tap.
+     Mid-scroll content (works titles, FAQ chevrons) must never sit under a FAB. */
   .hero-bottom {
-    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   }
 
   .site-frame,
   .case-study {
-    padding-bottom: calc(160px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Pause is desktop/tablet — frees left content from sticky overlap on phones */
   .motion-toggle {
     display: none !important;
   }
 
   .assistant-fab {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    right: max(14px, env(safe-area-inset-right, 0px));
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    min-height: 48px;
-    max-width: 48px;
-    padding: 0;
-    gap: 0;
-    justify-content: center;
-    border-radius: 999px;
+    display: none !important;
   }
 
-  .assistant-fab-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* Mid-page WA chip duplicates Plan FAB on phone */
   .wa-chip {
     display: none !important;
   }
@@ -1995,7 +1972,7 @@ button {
 
 @media (width <= 420px) {
   .hero-bottom {
-    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   }
 
   .site-frame,
