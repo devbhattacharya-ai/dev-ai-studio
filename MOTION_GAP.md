@@ -40,3 +40,13 @@ Diagnosed from live CSS/JS (`studio-portfolio-visual/main.css`, `studio-portfoli
 - Lightweight JS cursor parallax on `.orb-pointer` (no GSAP/Lenis dependency).
 - Pause/resume + `prefers-reduced-motion` kill decorative animations site-wide via `data-motion`.
 - Do **not** invent WhatsApp green or undo UX deltas (FAB → WhatsApp, no MR toggle, dual prices).
+
+## Hero H1 letter disperse (added 2026-10-01)
+
+Lightweight scroll listener (no Lenis/GSAP) on `HeroTitle` in `HomePage.tsx`:
+
+- Progress `0→1` = hero section top leaving viewport → hero fully scrolled out (`-rect.top / rect.height`).
+- Per `.hero-character`: deterministic spread from `--char-i` + opacity fade; masks `overflow: visible` while dispersing.
+- Respects Pause/Resume (`data-motion`) and `prefers-reduced-motion` (CSS + JS both force assembled).
+- Scope: hero H1 only — not other display headings.
+

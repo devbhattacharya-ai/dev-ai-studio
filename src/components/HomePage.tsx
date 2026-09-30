@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HOME } from "@/lib/content";
@@ -14,10 +14,128 @@ import { ProjectGuideFab } from "./ProjectGuideFab";
 import { ArrowUpRight, ArrowDown } from "./Icons";
 
 function HeroTitle({ lines }: { lines: readonly string[] }) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const label = lines.join(" ");
   let charIndex = 0;
+
+  /* Scroll-tied letter disperse — hero H1 only; gated by data-motion + reduced-motion */
+  useEffect(() => {
+    const title = titleRef.current;
+    const hero = title?.closest("section.hero");
+    if (!title || !(hero instanceof HTMLElement)) return;
+
+    const chars = Array.from(
+      title.querySelectorAll<HTMLElement>(".hero-character"),
+    );
+    const masks = Array.from(
+      title.querySelectorAll<HTMLElement>(".hero-line-mask"),
+    );
+    const mid = (chars.length - 1) / 2;
+
+    const spreads = chars.map((el, i) => {
+      const parsed = Number(el.style.getPropertyValue("--char-i"));
+      const ci = Number.isFinite(parsed) ? parsed : i;
+      const angle = (ci * 2.399963) % (Math.PI * 2);
+      const radius = 52 + (ci % 7) * 22;
+      return {
+        x: Math.cos(angle) * radius + (ci - mid) * 10,
+        y: Math.sin(angle) * radius - 36 - (ci % 5) * 14,
+      };
+    });
+
+    let raf = 0;
+
+    const motionAllowed = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return false;
+      }
+      return document.documentElement.dataset.motion === "on";
+    };
+
+    const clearDisperse = () => {
+      title.dataset.disperse = "0";
+      title.style.pointerEvents = "";
+      masks.forEach((m) => {
+        m.style.overflow = "";
+      });
+      chars.forEach((el) => {
+        el.style.translate = "";
+        el.style.opacity = "";
+      });
+    };
+
+    const applyDisperse = (progress: number) => {
+      const p = Math.min(1, Math.max(0, progress));
+      if (p <= 0.001) {
+        clearDisperse();
+        return;
+      }
+
+      /* Smoothstep so early scroll stays readable */
+      const e = p * p * (3 - 2 * p);
+      title.dataset.disperse = e >= 0.98 ? "1" : "active";
+      title.style.pointerEvents = e >= 0.85 ? "none" : "";
+      masks.forEach((m) => {
+        m.style.overflow = "visible";
+      });
+      chars.forEach((el, i) => {
+        const { x, y } = spreads[i];
+        el.style.translate = `${(x * e).toFixed(2)}px ${(y * e).toFixed(2)}px`;
+        el.style.opacity = String(Math.max(0, 1 - e));
+      });
+    };
+
+    const tick = () => {
+      raf = 0;
+      if (!motionAllowed()) {
+        clearDisperse();
+        return;
+      }
+      const rect = hero.getBoundingClientRect();
+      const height = Math.max(rect.height, 1);
+      /* 0 at hero top in view; 1 when hero fully scrolled out */
+      const progress = Math.min(1, Math.max(0, -rect.top / height));
+      applyDisperse(progress);
+    };
+
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    const mo = new MutationObserver(schedule);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
+    const frame = document.querySelector(".site-frame");
+    if (frame) {
+      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
+    }
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    mq.addEventListener("change", schedule);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    schedule();
+
+    return () => {
+      mo.disconnect();
+      mq.removeEventListener("change", schedule);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+      clearDisperse();
+    };
+  }, []);
+
   return (
-    <h1 id="hero-title" className="hero-title" aria-label={label}>
+    <h1
+      ref={titleRef}
+      id="hero-title"
+      className="hero-title"
+      aria-label={label}
+      data-disperse="0"
+    >
       {lines.map((line, lineIndex) => {
         const chars = Array.from(line);
         const start = charIndex;

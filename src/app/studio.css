@@ -187,6 +187,10 @@ button {
   max-width: 12ch;
 }
 
+.hero-title[data-disperse="1"] {
+  pointer-events: none;
+}
+
 .hero-line {
   display: block;
   padding: 0;
@@ -211,6 +215,7 @@ button {
 
 .hero-character {
   display: inline-block;
+  /* Disperse uses CSS `translate` so it composes with entrance `transform` keyframes */
 }
 
 .hero-orbit {
@@ -1830,6 +1835,16 @@ button {
   transform: none !important;
 }
 
+/* Hero H1 disperse — static when motion paused */
+[data-motion="off"] .hero-title .hero-character {
+  translate: none !important;
+  opacity: 1 !important;
+}
+
+[data-motion="off"] .hero-title {
+  pointer-events: auto !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1854,6 +1869,16 @@ button {
   .sphere-sheen {
     animation: none !important;
     opacity: 0.12;
+  }
+
+  /* Hero H1 disperse — static assembled title */
+  .hero-title .hero-character {
+    translate: none !important;
+    opacity: 1 !important;
+  }
+
+  .hero-title {
+    pointer-events: auto !important;
   }
 }
 

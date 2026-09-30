@@ -71,7 +71,17 @@ Restored from live sources into rebuild (no redesign):
 - Contact clover `.contact-mark` with shared sphere/sheen.
 - Sticky **Pause / Resume motion** sets `data-motion` on `html` + `.site-frame`; gates all decorative animations; respects `prefers-reduced-motion`.
 - Soft `.orb-pointer` cursor parallax when motion is on (fine pointer only).
+- Hero H1 scroll-tied letter disperse (see section below).
 - Details: `/workspace/dev-ai-studio/MOTION_GAP.md`.
+
+## Hero H1 scroll disperse (2026-10-01)
+
+- Target: `#hero-title` / `.hero-character` only (“GOOD DESIGN. REAL CONVERSATIONS.”).
+- Progress: `clamp(-heroRect.top / heroRect.height, 0, 1)` via rAF on scroll/resize; smoothstep easing; per-char deterministic translate + fade.
+- Assembled at scroll top; letters gone / `pointer-events: none` by hero exit so About isn’t blocked.
+- Gated by `data-motion="on"` and `prefers-reduced-motion: no-preference` (Pause motion + reduced → static H1).
+- Entrance keyframes kept: disperse uses CSS `translate` (composes with animated `transform`).
+- No Lenis/GSAP.
 
 ## Not done (by brief)
 
