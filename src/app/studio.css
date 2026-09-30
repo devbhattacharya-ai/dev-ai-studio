@@ -253,6 +253,11 @@ button {
   inset: 0;
 }
 
+.orb-scroll {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
 .orb-surface {
   inset: 5%;
   border-radius: 50%;
@@ -2003,6 +2008,10 @@ button {
   transform: none !important;
 }
 
+[data-motion="off"] .orb-scroll {
+  transform: none !important;
+}
+
 
 /* ——— Scroll fade-up (intro / work cards / services) ——— */
 /* Hidden only when motion is on; Pause + reduced-motion → normal static layout */
@@ -2073,6 +2082,10 @@ button {
   .sphere-sheen {
     animation: none !important;
     opacity: 0.12;
+  }
+
+  .orb-scroll {
+    transform: none !important;
   }
 
   /* Hero H1 disperse — static assembled title */

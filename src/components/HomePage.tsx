@@ -165,11 +165,77 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
 }
 
 function IridescentOrb() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  /* Scroll-linked rotation on .orb-scroll — composes with .orb-pointer parallax;
+     sheen pulse stays on .sphere-sheen via CSS. Gated by data-motion + reduced-motion. */
+  useEffect(() => {
+    const scrollEl = scrollRef.current;
+    const hero = scrollEl?.closest("section.hero");
+    if (!scrollEl || !(hero instanceof HTMLElement)) return;
+
+    let raf = 0;
+
+    const motionAllowed = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return false;
+      }
+      return document.documentElement.dataset.motion === "on";
+    };
+
+    const clearRotation = () => {
+      scrollEl.style.transform = "";
+    };
+
+    const tick = () => {
+      raf = 0;
+      if (!motionAllowed()) {
+        clearRotation();
+        return;
+      }
+      const rect = hero.getBoundingClientRect();
+      const height = Math.max(rect.height, 1);
+      /* 0 at hero top in view; 1 when hero fully scrolled out — same axis as H1 disperse */
+      const progress = Math.min(1, Math.max(0, -rect.top / height));
+      const deg = progress * 270;
+      scrollEl.style.transform = `rotate(${deg.toFixed(2)}deg)`;
+    };
+
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    const mo = new MutationObserver(schedule);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
+    const frame = document.querySelector(".site-frame");
+    if (frame) {
+      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
+    }
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    mq.addEventListener("change", schedule);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    schedule();
+
+    return () => {
+      mo.disconnect();
+      mq.removeEventListener("change", schedule);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+      clearRotation();
+    };
+  }, []);
+
   return (
     <div className="hero-orbit" aria-hidden="true">
       <span className="orbit-ring ring-outer" />
       <span className="orbit-ring ring-inner" />
-      <div className="orb-scroll">
+      <div className="orb-scroll" ref={scrollRef}>
         <div className="orb-pointer">
           <div className="orb-surface">
             <span className="iridescent-sphere" />
