@@ -15,6 +15,29 @@ body {
   overflow-x: clip;
 }
 
+/* Sticky Pause + Plan FAB clearance (all viewports — FABs are viewport-fixed) */
+html {
+  scroll-padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+}
+
+.site-frame,
+.pricing-page.site-frame,
+.case-study {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+}
+
+.work-section,
+.automation-section,
+.faq-section,
+.services-section,
+.process-section,
+.scope-section,
+.contact-section,
+.bridge-section,
+.intro-section {
+  scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
 h1, h2, h3, h4, p, ul, ol, figure {
   margin: 0;
 }
@@ -1907,8 +1930,9 @@ button {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   }
 
-  .site-frame {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  .site-frame,
+  .case-study {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px));
   }
 
   .motion-toggle,
@@ -1944,7 +1968,12 @@ button {
 @media (width <= 420px) {
   /* Tighter sticky chrome; keep single WhatsApp FAB (≤2 taps) */
   .hero-bottom {
-    padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-frame,
+  .case-study {
+    padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px));
   }
 
   .assistant-fab {
@@ -2197,4 +2226,12 @@ button {
     width: min(72vw, 360px);
     left: 65%;
   }
+}
+
+
+.case-live-note {
+  margin: 10px 0 14px;
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 46ch;
 }

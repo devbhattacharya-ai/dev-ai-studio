@@ -7,17 +7,34 @@ import { GhostLink } from "./GhostLink";
 
 type Status = "checking" | "ok" | "unavailable";
 
+function isAuthWalledHost(url: string) {
+  try {
+    const host = new URL(url).hostname;
+    return host.endsWith("chatgpt.site") || host.includes("chatgpt.com");
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Resilient “View live website” pattern:
  * - Local screenshot stays the primary preview (rendered by parent).
- * - External link kept with rel=noopener noreferrer.
- * - Soft reachability check; on failure show preview-only note (no invented demo URLs).
+ * - Never iframe external demos (auth-walled chatgpt.site returns 401).
+ * - Soft reachability; protected hosts skip fetch and show liveFallback.
  */
 export function CaseLiveExplore({ liveUrl }: { liveUrl: string }) {
   const chrome = CASE_CHROME;
-  const [status, setStatus] = useState<Status>("checking");
+  const protectedHost = isAuthWalledHost(liveUrl);
+  const [status, setStatus] = useState<Status>(
+    protectedHost ? "unavailable" : "checking",
+  );
 
   useEffect(() => {
+    if (protectedHost) {
+      setStatus("unavailable");
+      return;
+    }
+
     let cancelled = false;
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 4500);
@@ -43,18 +60,26 @@ export function CaseLiveExplore({ liveUrl }: { liveUrl: string }) {
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [liveUrl]);
+  }, [liveUrl, protectedHost]);
 
   return (
     <div className="case-live-explore">
-      <GhostLink href={liveUrl} external srHint={chrome.exploreLiveSr}>
-        {chrome.exploreLive}
-      </GhostLink>
       {status === "unavailable" ? (
         <p className="case-live-fallback" role="status">
           {chrome.liveFallback}
         </p>
       ) : null}
+      {!protectedHost ? (
+        <GhostLink href={liveUrl} external srHint={chrome.exploreLiveSr}>
+          {chrome.exploreLive}
+        </GhostLink>
+      ) : (
+        <p className="case-live-note">
+          <span className="label">{chrome.exploreLive}</span>
+          {" — "}
+          external demo is protected; use the screenshot above.
+        </p>
+      )}
       <Link className="ghost-link" href="/#automation-demo">
         {chrome.exploreDemo}
       </Link>

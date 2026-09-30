@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Devanagari } from "next/font/google";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { META } from "@/lib/content";
@@ -17,6 +17,12 @@ const noto = Noto_Sans_Devanagari({
   variable: "--font-noto-devanagari",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: META.title,
