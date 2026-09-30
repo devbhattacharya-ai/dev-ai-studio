@@ -6,7 +6,7 @@ import { HOME } from "@/lib/content";
 
 /**
  * Accordion UX with all Q&As always present in the DOM (SSR-safe).
- * Closed panels use the HTML `hidden` attribute — content stays in the bundle/HTML.
+ * Open/close uses CSS grid height ease (no bounce); content never unmounts.
  */
 export function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(null);
@@ -34,9 +34,11 @@ export function FaqAccordion() {
               id={`faq-panel-${i}`}
               role="region"
               aria-labelledby={`faq-trigger-${i}`}
-              hidden={!isOpen}
+              aria-hidden={!isOpen}
             >
-              <p>{a}</p>
+              <div className="faq-panel-inner">
+                <p>{a}</p>
+              </div>
             </div>
           </div>
         );

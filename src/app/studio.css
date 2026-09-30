@@ -457,9 +457,25 @@ button {
   margin-top: 42px;
 }
 
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+/* Work card lift — desktop hover + keyboard focus; no sticky hover on tap */
+.work-card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   [data-motion="on"] .work-card:hover .work-card-visual {
-    transform: translateY(-5px) scale(1.008);
+    transform: translateY(-6px) scale(1.012);
+    box-shadow: var(--shadow-work-hover);
+    border-style: solid;
+    border-color: var(--ash);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="on"] .work-card:focus-visible .work-card-visual {
+    transform: translateY(-6px) scale(1.012);
     box-shadow: var(--shadow-work-hover);
     border-style: solid;
     border-color: var(--ash);
@@ -605,6 +621,30 @@ button {
 .automation-steps li[data-current="true"] {
   color: var(--ink);
   font-weight: 700;
+}
+
+@keyframes demo-step-pulse {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: color-mix(in srgb, var(--ash) 55%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="on"] .automation-steps li[data-current="true"] {
+    margin-inline: -8px;
+    padding-inline: 8px;
+    border-radius: var(--radius);
+    animation: demo-step-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+[data-motion="off"] .automation-steps li[data-current="true"] {
+  animation: none !important;
+  background-color: transparent;
 }
 
 .demo-disclaimer {
@@ -848,10 +888,34 @@ button {
 }
 
 .faq-panel {
-  padding: 0 0 24px;
+  display: grid;
+  grid-template-rows: 0fr;
   font-size: 16px;
   color: var(--muted);
   max-width: 58ch;
+}
+
+.faq-item[data-open="true"] .faq-panel {
+  grid-template-rows: 1fr;
+}
+
+.faq-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.faq-panel-inner > p {
+  padding: 0 0 24px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="on"] .faq-panel {
+    transition: grid-template-rows 0.35s var(--ease);
+  }
+}
+
+[data-motion="off"] .faq-panel {
+  transition: none;
 }
 
 /* Contact */
@@ -1011,6 +1075,64 @@ button {
 .assistant-fab:hover {
   background: var(--ink);
   color: var(--parchment);
+}
+
+/* Sticky WhatsApp chip — mid-page; fades after hero, hides near contact */
+.wa-chip {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  z-index: 29;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  background: var(--parchment);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: inherit;
+  text-decoration: none;
+  translate: -50% 10px;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.wa-chip.is-visible {
+  opacity: 1;
+  translate: -50% 0;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="on"] .wa-chip {
+    transition:
+      opacity 0.35s var(--ease),
+      translate 0.35s var(--ease),
+      visibility 0.35s,
+      background var(--duration-fab),
+      color var(--duration-fab);
+  }
+}
+
+[data-motion="off"] .wa-chip {
+  transition: none;
+}
+
+.wa-chip:hover {
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-chip {
+    transition: none !important;
+  }
 }
 
 .assistant-overlay {
@@ -1715,6 +1837,13 @@ button {
 
   .assistant-fab {
     right: 14px;
+  }
+
+  .wa-chip {
+    bottom: 72px;
+    font-size: 12px;
+    min-height: 36px;
+    padding: 7px 12px;
   }
 
   .pricing-line-price {

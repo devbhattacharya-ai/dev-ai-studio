@@ -17,6 +17,7 @@ export const HOME = {
   nav: { work: "Work", services: "Services", demo: "Demo", pricing: "Pricing", talk: "Let's talk" },
   motion: { resume: "Resume motion", pause: "Pause motion", reduced: "Reduced motion" },
   fab: "Plan your project",
+  waChip: "Chat on WhatsApp",
   hero: {
     eyebrow: "AI websites + WhatsApp automation",
     location: "KHARGHAR, INDIA / WORKING EVERYWHERE",

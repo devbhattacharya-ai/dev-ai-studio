@@ -404,7 +404,7 @@ export function HomePage() {
             {HOME.services.pricingLink}
             <ArrowUpRight />
           </Link>
-          <div className="outcomes-block">
+          <div className="outcomes-block reveal">
             <p className="label">{HOME.outcomes.label}</p>
             <h3>{HOME.outcomes.h3}</h3>
             <div className="outcomes-grid">

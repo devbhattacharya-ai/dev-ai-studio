@@ -5,11 +5,12 @@ import { HOME } from "@/lib/content";
 import { WA_PRIMARY } from "@/lib/links";
 import { MessageCircle } from "./Icons";
 
-/** Sticky motion control + “Plan your project” FAB → WhatsApp in 1 tap. */
+/** Sticky motion control + WhatsApp chip + “Plan your project” FAB. */
 export function ProjectGuideFab() {
   const [motionOn, setMotionOn] = useState(true);
   const [reduced, setReduced] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [chipVisible, setChipVisible] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -81,6 +82,36 @@ export function ProjectGuideFab() {
     };
   }, [active]);
 
+  /* Sticky WhatsApp chip — show after hero, hide near #contact */
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const hero = document.querySelector("section.hero");
+      const contact = document.querySelector("#contact");
+      let show = false;
+      if (hero instanceof HTMLElement) {
+        show = hero.getBoundingClientRect().bottom < 8;
+      }
+      if (show && contact instanceof HTMLElement) {
+        const top = contact.getBoundingClientRect().top;
+        if (top < window.innerHeight * 0.82) show = false;
+      }
+      setChipVisible(show);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    schedule();
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <>
       <button
@@ -97,6 +128,18 @@ export function ProjectGuideFab() {
             ? HOME.motion.pause
             : HOME.motion.resume}
       </button>
+
+      <a
+        className={`wa-chip${chipVisible ? " is-visible" : ""}`}
+        href={WA_PRIMARY}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-hidden={!chipVisible}
+        tabIndex={chipVisible ? 0 : -1}
+      >
+        <MessageCircle size={16} />
+        <span>{HOME.waChip}</span>
+      </a>
 
       <a
         className="assistant-fab"
