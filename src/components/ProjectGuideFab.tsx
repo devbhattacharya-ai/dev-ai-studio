@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HOME } from "@/lib/content";
-import { WA_PRIMARY } from "@/lib/links";
+import { getHome } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
+import { waPrimary } from "@/lib/links";
 import { MessageCircle } from "./Icons";
 
 /** Sticky motion control + WhatsApp chip + “Plan your project” FAB.
  *  Orb pointer parallax is owned by useStudioMotion (GSAP quickTo). */
 export function ProjectGuideFab() {
+  const { lang } = useLanguage();
+  const HOME = getHome(lang);
+  const wa = waPrimary(lang);
   const [motionOn, setMotionOn] = useState(true);
   const [reduced, setReduced] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -83,7 +87,7 @@ export function ProjectGuideFab() {
 
       <a
         className={`wa-chip${chipVisible ? " is-visible" : ""}`}
-        href={WA_PRIMARY}
+        href={wa}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={HOME.waChip}
@@ -99,7 +103,7 @@ export function ProjectGuideFab() {
 
       <a
         className="assistant-fab"
-        href={WA_PRIMARY}
+        href={wa}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={HOME.fab}

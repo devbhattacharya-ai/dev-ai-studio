@@ -6,7 +6,7 @@ import { Brand } from "./Brand";
 import { GhostLink } from "./GhostLink";
 import { ArrowUpRight } from "./Icons";
 import {
-  PRICING_COPY,
+  getPricingCopy,
   WEBSITE_TIERS,
   MOTION_PRICES,
   WA_PRICES,
@@ -16,6 +16,8 @@ import {
   type DualMoney,
 } from "@/lib/pricing";
 import { waPricing } from "@/lib/links";
+import { useLanguage } from "@/lib/LanguageContext";
+import { LanguageSwitch } from "./LanguageSwitch";
 
 const COUNT_MS = 520;
 
@@ -77,10 +79,12 @@ function DualLinePrice({
 }
 
 export function PricingPage() {
+  const { lang } = useLanguage();
+  const copy = getPricingCopy(lang);
+  const q = lang === "mr" ? "?lang=mr" : "";
   const [highlight, setHighlight] = useState<Currency>("inr");
   const [progress, setProgress] = useState(1);
   const rafRef = useRef<number | null>(null);
-  const copy = PRICING_COPY;
 
   useEffect(() => {
     try {
@@ -138,12 +142,12 @@ export function PricingPage() {
   const featured = WEBSITE_TIERS[0];
 
   return (
-    <div className="pricing-page site-frame" data-language="en">
+    <div className="pricing-page site-frame" data-language={lang}>
       <a className="skip-link" href="#pricing-main">
         {copy.skip}
       </a>
       <header className="pricing-header page-shell">
-        <Brand href="/" />
+        <Brand href={lang === "mr" ? "/?lang=mr" : "/"} />
         <nav className="pricing-header-links" aria-label="Main navigation">
           <Link href="/#work" className="ghost-link">
             {copy.nav.work}
@@ -153,6 +157,7 @@ export function PricingPage() {
           </Link>
           <span aria-current="page">{copy.nav.pricing}</span>
         </nav>
+        <LanguageSwitch />
       </header>
       <main id="pricing-main" tabIndex={-1} className="page-shell">
         <section id="websites" className="pricing-section pricing-websites">
@@ -337,7 +342,7 @@ export function PricingPage() {
             <div>
               <p>{copy.ctaText}</p>
               <GhostLink
-                href={waPricing(highlight, "en")}
+                href={waPricing(highlight, lang)}
                 className="underlined"
                 external
                 srHint={copy.ctaSr}
@@ -355,10 +360,11 @@ export function PricingPage() {
         <div className="footer-bottom">
           <p>{copy.footer}</p>
           <div className="footer-controls">
-            <Link className="ghost-link" href="/project-notes">
+            <Link className="ghost-link" href={`/project-notes?lang=${lang}`}>
               {copy.notes}
             </Link>
-            <Link className="ghost-link" href="/">
+            <LanguageSwitch />
+            <Link className="ghost-link" href={lang === "mr" ? "/?lang=mr" : "/"}>
               <ArrowUpRight />
               {copy.back}
             </Link>

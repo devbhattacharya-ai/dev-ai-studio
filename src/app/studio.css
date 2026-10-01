@@ -159,6 +159,38 @@ button {
   padding: 12px 0;
 }
 
+/* Live Ig() rolling dual-label hover */
+.rolling-label {
+  height: 1.4em;
+  display: block;
+  position: relative;
+  overflow: clip;
+}
+
+.rolling-label > span {
+  transition: transform 0.45s var(--ease, cubic-bezier(0.22, 1, 0.36, 1));
+  display: block;
+}
+
+.rolling-label > span + span {
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+a:hover .rolling-label > span,
+a:focus-visible .rolling-label > span {
+  transform: translateY(-100%);
+}
+
+.main-nav a:hover {
+  text-decoration: none;
+}
+
+[data-motion="off"] .rolling-label > span {
+  transition: none;
+}
+
 .header-actions {
   display: flex;
   align-items: center;

@@ -2,27 +2,32 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { getCase } from "@/lib/cases";
-import { CASE_CHROME } from "@/lib/content";
+import { getCase, getCaseCopy } from "@/lib/cases";
+import { getCaseChrome } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
 import { waCase } from "@/lib/links";
+import { LanguageSwitch } from "./LanguageSwitch";
 import { GhostLink } from "./GhostLink";
 import { CaseLiveExplore } from "./CaseLiveExplore";
 
 export function CaseStudyPage({ slug }: { slug: string }) {
+  const { lang } = useLanguage();
   const study = getCase(slug);
   if (!study) return null;
-  const copy = study.en;
-  const chrome = CASE_CHROME;
+  const copy = getCaseCopy(study, lang);
+  const chrome = getCaseChrome(lang);
+  const workHref = lang === "mr" ? "/?lang=mr#work" : "/#work";
 
   return (
-    <div className="case-study page-shell" data-language="en">
+    <div className="case-study page-shell" data-language={lang}>
       <a className="skip-link" href="#case-content">
-        Skip to case study
+        {chrome.skip}
       </a>
-      <nav className="case-nav" aria-label="Project navigation">
-        <Link className="ghost-link" href="/#work">
+      <nav className="case-nav" aria-label={chrome.navAria}>
+        <Link className="ghost-link" href={workHref}>
           ← {chrome.selectedWork}
         </Link>
+        <LanguageSwitch />
       </nav>
       <main id="case-content" tabIndex={-1} aria-labelledby="case-title">
         <header className="case-hero">
@@ -39,7 +44,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
             src={study.image}
             width={1200}
             height={750}
-            alt={`${study.title} — website preview in its original colours`}
+            alt={`${study.title} — ${chrome.previewAltSuffix}`}
             priority
           />
           <figcaption>{chrome.previewLabel}</figcaption>
@@ -90,7 +95,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
         <GhostLink href={waCase(study.title)} external srHint={chrome.nextCtaSr}>
           {chrome.nextCta}
         </GhostLink>
-        <Link className="ghost-link" href="/#work">
+        <Link className="ghost-link" href={workHref}>
           {chrome.back}
         </Link>
       </footer>

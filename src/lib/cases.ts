@@ -1,3 +1,5 @@
+import { CASE_MR, HOME_CARD_MR } from "./mr-packs";
+
 export type CaseCopy = {
   sector: string;
   deck: string;
@@ -172,8 +174,20 @@ export const CASES: CaseStudy[] = [
   },
 ];
 
+
 export function getCase(slug: string) {
   return CASES.find((c) => c.slug === slug);
+}
+
+export function getCaseCopy(study: CaseStudy, lang: "en" | "mr"): CaseCopy {
+  const mr = CASE_MR[study.slug];
+  if (lang === "mr" && mr) return mr;
+  return study.en;
+}
+
+export function homeCardBlurb(study: CaseStudy, lang: "en" | "mr"): string {
+  if (lang === "mr" && HOME_CARD_MR[study.slug]) return HOME_CARD_MR[study.slug];
+  return study.homeCard.en;
 }
 
 export const CASE_SLUGS = CASES.map((c) => c.slug);

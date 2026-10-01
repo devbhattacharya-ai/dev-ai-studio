@@ -3,8 +3,9 @@
 import { useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { HOME } from "@/lib/content";
-import { WA_PRIMARY, PHONE_TEL } from "@/lib/links";
+import { getHome } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
+import { waPrimary, PHONE_TEL } from "@/lib/links";
 import { useStudioMotion } from "@/hooks/useStudioMotion";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
@@ -103,6 +104,9 @@ function StatementHeading({ text }: { text: string }) {
 
 export function HomePage() {
   const frameRef = useRef<HTMLDivElement>(null);
+  const { lang } = useLanguage();
+  const HOME = getHome(lang);
+  const wa = waPrimary(lang);
   useStudioMotion(frameRef);
 
   return (
@@ -110,7 +114,7 @@ export function HomePage() {
       ref={frameRef}
       className="site-frame"
       id="top"
-      data-language="en"
+      data-language={lang}
       data-motion="off"
     >
       <a className="skip-link" href="#main-content">
@@ -140,7 +144,7 @@ export function HomePage() {
               </div>
               <div>
                 <p className="hero-summary">{HOME.hero.body}</p>
-                <GhostLink href={WA_PRIMARY} className="underlined" external>
+                <GhostLink href={wa} className="underlined" external>
                   {HOME.hero.ctaPrimary}
                 </GhostLink>
               </div>
@@ -255,7 +259,7 @@ export function HomePage() {
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                  <GhostLink href={WA_PRIMARY} className="underlined" external>
+                  <GhostLink href={wa} className="underlined" external>
                     {tier.cta}
                   </GhostLink>
                 </div>
@@ -355,7 +359,7 @@ export function HomePage() {
                 </span>
               </div>
               <p>{HOME.contact.body}</p>
-              <GhostLink href={WA_PRIMARY} className="contact-whatsapp underlined" external>
+              <GhostLink href={wa} className="contact-whatsapp underlined" external>
                 {HOME.contact.ctaWhatsapp}
               </GhostLink>
               <a className="ghost-link" href={PHONE_TEL}>

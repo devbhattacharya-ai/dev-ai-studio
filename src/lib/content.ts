@@ -1,4 +1,6 @@
 import { CASES } from "./cases";
+import { localize } from "./localize";
+import { HOME_MR, CASE_CHROME_MR, NOTES_MR, HOME_CARD_MR } from "./mr-packs";
 
 export type Lang = "en" | "mr";
 
@@ -14,7 +16,7 @@ export const META = {
 
 export const HOME = {
   skip: "Skip to main content",
-  nav: { work: "Work", services: "Services", demo: "Demo", pricing: "Pricing", talk: "Let's talk" },
+  nav: { work: "Work", services: "Services", demo: "Demo", pricing: "Pricing", talk: "Let's talk", aria: "Main navigation" },
   motion: { resume: "Resume motion", pause: "Pause motion", reduced: "Reduced motion" },
   fab: "Plan your project",
   waChip: "Chat on WhatsApp",
@@ -263,7 +265,10 @@ export const HOME = {
 };
 
 export const CASE_CHROME = {
+  skip: "Skip to case study",
+  navAria: "Project navigation",
   selectedWork: "Selected work",
+  previewAltSuffix: "website preview in its original colours",
   label: "PROJECT STORY / CONCEPT",
   badgeSelf: "Self-initiated demo",
   previewLabel: "DESKTOP PREVIEW / ORIGINAL COLOURS",
@@ -323,3 +328,36 @@ export const NOTES = {
   ] as [string, string][],
   cta: "Contact Dev ↗",
 };
+
+
+export type HomeCopy = typeof HOME;
+
+/** Localized home copy — MR from live packs, EN fallback for missing keys. */
+export function getHome(lang: Lang): HomeCopy {
+  const base = localize(lang, HOME, HOME_MR) as HomeCopy;
+  if (lang !== "mr") return base;
+  const cardSuffix = (HOME_MR.work as { cardNumberSuffix?: string }).cardNumberSuffix ?? "CONCEPT PROJECT";
+  return {
+    ...base,
+    work: {
+      ...base.work,
+      cards: HOME.work.cards.map((card) => ({
+        ...card,
+        number: card.number.replace(/CONCEPT PROJECT$/, cardSuffix),
+        blurb: HOME_CARD_MR[card.slug] ?? card.blurb,
+      })),
+    },
+  };
+}
+
+export type CaseChrome = typeof CASE_CHROME;
+
+export function getCaseChrome(lang: Lang): CaseChrome {
+  return localize(lang, CASE_CHROME, CASE_CHROME_MR) as CaseChrome;
+}
+
+export type NotesCopy = typeof NOTES;
+
+export function getNotes(lang: Lang): NotesCopy {
+  return localize(lang, NOTES, NOTES_MR) as NotesCopy;
+}

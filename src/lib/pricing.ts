@@ -1,3 +1,7 @@
+import type { Lang } from "./content";
+import { localize } from "./localize";
+import { PRICING_MR } from "./mr-packs";
+
 export type Currency = "inr" | "usd";
 
 export const WEBSITE_TIERS = [
@@ -99,6 +103,12 @@ export const PRICING_COPY = {
   notes: "Privacy & project notes",
   back: "Back to studio",
 };
+
+export type PricingCopy = typeof PRICING_COPY;
+
+export function getPricingCopy(lang: Lang): PricingCopy {
+  return localize(lang, PRICING_COPY, PRICING_MR) as PricingCopy;
+}
 
 export function formatMoney(amount: number, currency: Currency) {
   return new Intl.NumberFormat(currency === "inr" ? "en-IN" : "en-US", {

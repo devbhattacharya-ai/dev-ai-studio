@@ -1,16 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { NOTES } from "@/lib/content";
+import { LanguageSwitch } from "./LanguageSwitch";
+import { getNotes } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
 import { WA_CONTACT_PLAIN } from "@/lib/links";
 
 export function ProjectNotesPage() {
+  const { lang } = useLanguage();
+  const NOTES = getNotes(lang);
+  const homeHref = lang === "mr" ? "/?lang=mr" : "/";
   return (
-    <main className="case-study page-shell" data-language="en">
+    <main className="case-study page-shell" data-language={lang}>
       <nav className="case-nav">
-        <Link className="ghost-link" href="/">
+        <Link className="ghost-link" href={homeHref}>
           {NOTES.back}
         </Link>
+        <LanguageSwitch />
       </nav>
       <header className="case-hero">
         <p className="label">{NOTES.label}</p>

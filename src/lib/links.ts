@@ -14,6 +14,10 @@ export const WA_PRIMARY_MR =
     "नमस्कार Dev, मला माझ्या व्यवसायासाठी AI वेबसाइट किंवा WhatsApp ऑटोमेशनबद्दल चर्चा करायची आहे."
   );
 
+export function waPrimary(lang: "en" | "mr" = "en") {
+  return lang === "mr" ? WA_PRIMARY_MR : WA_PRIMARY;
+}
+
 export function waPricing(currency: "inr" | "usd", lang: "en" | "mr") {
   const text =
     lang === "mr"
@@ -22,6 +26,7 @@ export function waPricing(currency: "inr" | "usd", lang: "en" | "mr") {
   return `https://wa.me/917738400373?text=${encodeURIComponent(text)}`;
 }
 
+/** Live case prefill is EN-only in source; keep EN template. */
 export function waCase(title: string) {
   return (
     "https://wa.me/917738400373?text=" +
@@ -31,6 +36,7 @@ export function waCase(title: string) {
   );
 }
 
+/** Live demo prefill uses EN template with localized scenario name. */
 export function waDemo(scenario: string) {
   return (
     "https://wa.me/917738400373?text=" +

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CASE_CHROME } from "@/lib/content";
+import { getCaseChrome } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
 import { GhostLink } from "./GhostLink";
 
 type Status = "checking" | "ok" | "unavailable";
@@ -23,7 +24,8 @@ function isAuthWalledHost(url: string) {
  * - Soft reachability; protected hosts skip fetch and show liveFallback.
  */
 export function CaseLiveExplore({ liveUrl }: { liveUrl: string }) {
-  const chrome = CASE_CHROME;
+  const { lang } = useLanguage();
+  const chrome = getCaseChrome(lang);
   const protectedHost = isAuthWalledHost(liveUrl);
   const [status, setStatus] = useState<Status>(
     protectedHost ? "unavailable" : "checking",

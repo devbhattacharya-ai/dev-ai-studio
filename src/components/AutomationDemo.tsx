@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { HOME } from "@/lib/content";
+import { getHome } from "@/lib/content";
+import { useLanguage } from "@/lib/LanguageContext";
 import { waDemo } from "@/lib/links";
 import { GhostLink } from "./GhostLink";
 import { RotateCcw } from "./Icons";
 
 export function AutomationDemo() {
+  const { lang } = useLanguage();
+  const HOME = getHome(lang);
   const [scenario, setScenario] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const tree = HOME.demo.trees[scenario];
@@ -14,12 +17,16 @@ export function AutomationDemo() {
   const choices = answers.map((idx, step) => tree[step].choices[idx]);
   const actionRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setAnswers([]);
+  }, [lang]);
+
   /* Keep keyboard focus inside the demo after each step (buttons remount). */
   useEffect(() => {
     const root = actionRef.current;
     if (!root) return;
     const focusable = root.querySelector<HTMLElement>(
-      'button:not([disabled]), a[href]',
+      "button:not([disabled]), a[href]",
     );
     focusable?.focus();
   }, [answers, scenario, done]);
