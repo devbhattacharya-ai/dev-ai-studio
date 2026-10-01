@@ -320,6 +320,25 @@ a:focus-visible .rolling-label > span {
   /* Disperse uses CSS `translate` so it composes with entrance `transform` keyframes */
 }
 
+/* Match live ChatGPT-site MR hero type over the orb */
+[data-language="mr"] .hero-title {
+  letter-spacing: -0.02em;
+  font-size: clamp(52px, 7vw, 96px);
+  line-height: 1.15;
+  font-family: var(--font-noto-devanagari), "Noto Sans Devanagari", var(--font-inter),
+    "Inter", Arial, sans-serif;
+  max-width: none;
+}
+
+[data-language="mr"] .hero-line {
+  white-space: normal;
+}
+
+[data-language="mr"] .hero-line-mask {
+  margin-block: -0.13em;
+  padding-block: 0.17em;
+}
+
 .hero-orbit {
   position: absolute;
   z-index: 0;
@@ -2312,6 +2331,16 @@ a:focus-visible .rolling-label > span {
   .hero-orbit {
     width: min(72vw, 360px);
     left: 65%;
+  }
+
+  [data-language="mr"] .hero-title {
+    font-size: clamp(48px, 10.2vw, 70px);
+    line-height: 1.18;
+  }
+
+  [data-language="mr"] .hero-stage {
+    min-height: 360px;
+    padding-block: 65px;
   }
 }
 

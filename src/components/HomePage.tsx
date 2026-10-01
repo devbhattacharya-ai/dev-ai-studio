@@ -15,14 +15,22 @@ import { AutomationDemo } from "./AutomationDemo";
 import { ProjectGuideFab } from "./ProjectGuideFab";
 import { ArrowUpRight, ArrowDown } from "./Icons";
 
-function HeroTitle({ lines }: { lines: readonly string[] }) {
+function HeroTitle({
+  lines,
+  lang,
+}: {
+  lines: readonly string[];
+  lang: "en" | "mr";
+}) {
   const label = lines.join(" ");
   let charIndex = 0;
 
   return (
     <h1 id="hero-title" className="hero-title" aria-label={label}>
       {lines.map((line, lineIndex) => {
-        const chars = Array.from(line);
+        /* Live ChatGPT-site: EN splits glyphs for disperse; MR keeps each line whole
+           so Devanagari clusters are never broken across spans. */
+        const chars = lang === "en" ? Array.from(line) : [line];
         const start = charIndex;
         charIndex += chars.length;
         return (
@@ -130,7 +138,7 @@ export function HomePage() {
             </div>
             <div className="hero-stage">
               <IridescentOrb />
-              <HeroTitle lines={HOME.hero.lines} />
+              <HeroTitle lines={HOME.hero.lines} lang={lang} />
               <span className="hero-coordinate label" aria-hidden="true">
                 {HOME.hero.coordinate}
               </span>
