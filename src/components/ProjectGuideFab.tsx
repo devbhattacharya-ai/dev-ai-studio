@@ -5,7 +5,8 @@ import { HOME } from "@/lib/content";
 import { WA_PRIMARY } from "@/lib/links";
 import { MessageCircle } from "./Icons";
 
-/** Sticky motion control + WhatsApp chip + “Plan your project” FAB. */
+/** Sticky motion control + WhatsApp chip + “Plan your project” FAB.
+ *  Orb pointer parallax is owned by useStudioMotion (GSAP quickTo). */
 export function ProjectGuideFab() {
   const [motionOn, setMotionOn] = useState(true);
   const [reduced, setReduced] = useState(false);
@@ -31,55 +32,6 @@ export function ProjectGuideFab() {
     document.documentElement.dataset.motion = value;
     const frame = document.querySelector(".site-frame");
     if (frame instanceof HTMLElement) frame.dataset.motion = value;
-  }, [active]);
-
-  /* Soft cursor parallax on .orb-pointer — live GSAP quickTo equivalent */
-  useEffect(() => {
-    if (!active) {
-      document.querySelectorAll<HTMLElement>(".orb-pointer").forEach((el) => {
-        el.style.transform = "";
-      });
-      return;
-    }
-
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
-    if (!fine.matches) return;
-
-    let raf = 0;
-    let running = true;
-    let targetX = 0;
-    let targetY = 0;
-    let curX = 0;
-    let curY = 0;
-
-    const tick = () => {
-      if (!running) return;
-      curX += (targetX - curX) * 0.08;
-      curY += (targetY - curY) * 0.08;
-      document.querySelectorAll<HTMLElement>(".orb-pointer").forEach((el) => {
-        el.style.transform = `translate(${curX.toFixed(2)}px, ${curY.toFixed(2)}px)`;
-      });
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    const onMove = (e: MouseEvent) => {
-      const hero = document.querySelector(".hero");
-      if (!hero) return;
-      if (hero.getBoundingClientRect().bottom <= 0) return;
-      targetX = (e.clientX / window.innerWidth - 0.5) * 38;
-      targetY = (e.clientY / window.innerHeight - 0.5) * 28;
-    };
-
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      window.removeEventListener("mousemove", onMove);
-      document.querySelectorAll<HTMLElement>(".orb-pointer").forEach((el) => {
-        el.style.transform = "";
-      });
-    };
   }, [active]);
 
   /* Sticky WhatsApp chip — show after hero, hide near #contact */

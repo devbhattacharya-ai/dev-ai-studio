@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HOME } from "@/lib/content";
 import { WA_PRIMARY, PHONE_TEL } from "@/lib/links";
+import { useStudioMotion } from "@/hooks/useStudioMotion";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { GhostLink } from "./GhostLink";
@@ -14,153 +15,11 @@ import { ProjectGuideFab } from "./ProjectGuideFab";
 import { ArrowUpRight, ArrowDown } from "./Icons";
 
 function HeroTitle({ lines }: { lines: readonly string[] }) {
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const label = lines.join(" ");
   let charIndex = 0;
 
-  /* Scroll-tied letter disperse — hero H1 only; gated by data-motion + reduced-motion */
-  useEffect(() => {
-    const title = titleRef.current;
-    const hero = title?.closest("section.hero");
-    if (!title || !(hero instanceof HTMLElement)) return;
-
-    const chars = Array.from(
-      title.querySelectorAll<HTMLElement>(".hero-character"),
-    );
-    const masks = Array.from(
-      title.querySelectorAll<HTMLElement>(".hero-line-mask"),
-    );
-    const mid = (chars.length - 1) / 2;
-
-    const spreads = chars.map((el, i) => {
-      const parsed = Number(el.style.getPropertyValue("--char-i"));
-      const ci = Number.isFinite(parsed) ? parsed : i;
-      const angle = (ci * 2.399963) % (Math.PI * 2);
-      const radius = 52 + (ci % 7) * 22;
-      return {
-        x: Math.cos(angle) * radius + (ci - mid) * 10,
-        y: Math.sin(angle) * radius - 36 - (ci % 5) * 14,
-      };
-    });
-
-    let raf = 0;
-    let running = false;
-    let targetP = 0;
-    let currentP = 0;
-    const LERP = 0.14;
-
-    const motionAllowed = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return false;
-      }
-      return document.documentElement.dataset.motion === "on";
-    };
-
-    const clearDisperse = () => {
-      title.dataset.disperse = "0";
-      title.style.pointerEvents = "";
-      masks.forEach((m) => {
-        m.style.overflow = "";
-      });
-      chars.forEach((el) => {
-        el.style.translate = "";
-        el.style.opacity = "";
-      });
-      currentP = 0;
-      targetP = 0;
-    };
-
-    const applyDisperse = (progress: number) => {
-      const p = Math.min(1, Math.max(0, progress));
-      if (p <= 0.001) {
-        clearDisperse();
-        return;
-      }
-
-      /* Smoothstep so early scroll stays readable */
-      const e = p * p * (3 - 2 * p);
-      title.dataset.disperse = e >= 0.98 ? "1" : "active";
-      title.style.pointerEvents = e >= 0.85 ? "none" : "";
-      masks.forEach((m) => {
-        m.style.overflow = "visible";
-      });
-      chars.forEach((el, i) => {
-        const { x, y } = spreads[i];
-        el.style.translate = `${(x * e).toFixed(2)}px ${(y * e).toFixed(2)}px`;
-        el.style.opacity = String(Math.max(0, 1 - e));
-      });
-    };
-
-    const readTarget = () => {
-      const rect = hero.getBoundingClientRect();
-      const height = Math.max(rect.height, 1);
-      targetP = Math.min(1, Math.max(0, -rect.top / height));
-    };
-
-    const loop = () => {
-      if (!running) return;
-      if (!motionAllowed()) {
-        clearDisperse();
-        running = false;
-        raf = 0;
-        return;
-      }
-      readTarget();
-      currentP += (targetP - currentP) * LERP;
-      if (Math.abs(targetP - currentP) < 0.0008) currentP = targetP;
-      applyDisperse(currentP);
-      raf = requestAnimationFrame(loop);
-    };
-
-    const schedule = () => {
-      if (!motionAllowed()) {
-        clearDisperse();
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-        raf = 0;
-        return;
-      }
-      if (!running) {
-        running = true;
-        raf = requestAnimationFrame(loop);
-      }
-    };
-
-    const mo = new MutationObserver(schedule);
-    mo.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-motion"],
-    });
-    const frame = document.querySelector(".site-frame");
-    if (frame) {
-      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
-    }
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mq.addEventListener("change", schedule);
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule, { passive: true });
-    schedule();
-
-    return () => {
-      running = false;
-      mo.disconnect();
-      mq.removeEventListener("change", schedule);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      if (raf) cancelAnimationFrame(raf);
-      clearDisperse();
-    };
-  }, []);
-
   return (
-    <h1
-      ref={titleRef}
-      id="hero-title"
-      className="hero-title"
-      aria-label={label}
-      data-disperse="0"
-    >
+    <h1 id="hero-title" className="hero-title" aria-label={label}>
       {lines.map((line, lineIndex) => {
         const chars = Array.from(line);
         const start = charIndex;
@@ -190,103 +49,11 @@ function HeroTitle({ lines }: { lines: readonly string[] }) {
 }
 
 function IridescentOrb() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  /* Soft scroll-linked rotation — lerp toward target (not 1:1 scroll).
-     Composes with .orb-pointer parallax; sheen stays on .sphere-sheen. */
-  useEffect(() => {
-    const scrollEl = scrollRef.current;
-    const hero = scrollEl?.closest("section.hero");
-    if (!scrollEl || !(hero instanceof HTMLElement)) return;
-
-    let raf = 0;
-    let running = false;
-    let targetDeg = 0;
-    let currentDeg = 0;
-    const MAX_DEG = 180;
-    const LERP = 0.12;
-
-    const motionAllowed = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return false;
-      }
-      return document.documentElement.dataset.motion === "on";
-    };
-
-    const clearRotation = () => {
-      scrollEl.style.transform = "";
-      currentDeg = 0;
-      targetDeg = 0;
-    };
-
-    const readTarget = () => {
-      const rect = hero.getBoundingClientRect();
-      const height = Math.max(rect.height, 1);
-      const progress = Math.min(1, Math.max(0, -rect.top / height));
-      targetDeg = progress * MAX_DEG;
-    };
-
-    const loop = () => {
-      if (!running) return;
-      if (!motionAllowed()) {
-        clearRotation();
-        running = false;
-        raf = 0;
-        return;
-      }
-      readTarget();
-      currentDeg += (targetDeg - currentDeg) * LERP;
-      if (Math.abs(targetDeg - currentDeg) < 0.05) currentDeg = targetDeg;
-      scrollEl.style.transform = `rotate(${currentDeg.toFixed(2)}deg)`;
-      raf = requestAnimationFrame(loop);
-    };
-
-    const ensureLoop = () => {
-      if (!motionAllowed()) {
-        clearRotation();
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-        raf = 0;
-        return;
-      }
-      if (!running) {
-        running = true;
-        raf = requestAnimationFrame(loop);
-      }
-    };
-
-    const mo = new MutationObserver(ensureLoop);
-    mo.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-motion"],
-    });
-    const frame = document.querySelector(".site-frame");
-    if (frame) {
-      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
-    }
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mq.addEventListener("change", ensureLoop);
-    window.addEventListener("scroll", ensureLoop, { passive: true });
-    window.addEventListener("resize", ensureLoop, { passive: true });
-    ensureLoop();
-
-    return () => {
-      running = false;
-      mo.disconnect();
-      mq.removeEventListener("change", ensureLoop);
-      window.removeEventListener("scroll", ensureLoop);
-      window.removeEventListener("resize", ensureLoop);
-      if (raf) cancelAnimationFrame(raf);
-      clearRotation();
-    };
-  }, []);
-
   return (
     <div className="hero-orbit" aria-hidden="true">
       <span className="orbit-ring ring-outer" />
       <span className="orbit-ring ring-inner" />
-      <div className="orb-scroll" ref={scrollRef}>
+      <div className="orb-scroll">
         <div className="orb-pointer">
           <div className="orb-surface">
             <span className="iridescent-sphere" />
@@ -298,122 +65,92 @@ function IridescentOrb() {
   );
 }
 
+function MotionLines({
+  lines,
+  as: Tag = "h2",
+  className,
+  id,
+}: {
+  lines: readonly string[];
+  as?: "h2";
+  className: string;
+  id?: string;
+}) {
+  return (
+    <Tag id={id} className={className}>
+      {lines.map((line) => (
+        <span className="motion-mask" key={line}>
+          <span className="motion-line">{line}</span>
+        </span>
+      ))}
+    </Tag>
+  );
+}
 
-/** Scroll fade-up once — intro / work cards / services. Gated by data-motion + reduced-motion via CSS. */
-function useScrollReveal() {
-  useEffect(() => {
-    const nodes = Array.from(
-      document.querySelectorAll<HTMLElement>(".reveal"),
-    );
-    if (!nodes.length) return;
-
-    const motionAllowed = () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return false;
-      }
-      return document.documentElement.dataset.motion === "on";
-    };
-
-    const markIn = (el: Element) => {
-      el.classList.add("is-in");
-      observer.unobserve(el);
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) markIn(entry.target);
-        }
-      },
-      { threshold: 0.14, rootMargin: "0px 0px -6% 0px" },
-    );
-
-    /** When motion turns on, immediately reveal already-visible targets (avoid opacity flash). */
-    const flushVisible = () => {
-      const vh = window.innerHeight;
-      for (const el of nodes) {
-        if (el.classList.contains("is-in")) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top < vh * 0.94 && rect.bottom > 0) markIn(el);
-      }
-    };
-
-    const sync = () => {
-      if (!motionAllowed()) {
-        /* Static: ensure visible; keep observing for later resume */
-        flushVisible();
-        return;
-      }
-      for (const el of nodes) {
-        if (!el.classList.contains("is-in")) observer.observe(el);
-      }
-      flushVisible();
-    };
-
-    for (const el of nodes) observer.observe(el);
-
-    const mo = new MutationObserver(sync);
-    mo.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-motion"],
-    });
-    const frame = document.querySelector(".site-frame");
-    if (frame) {
-      mo.observe(frame, { attributes: true, attributeFilter: ["data-motion"] });
-    }
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mq.addEventListener("change", sync);
-    sync();
-
-    return () => {
-      mo.disconnect();
-      mq.removeEventListener("change", sync);
-      observer.disconnect();
-    };
-  }, []);
+function StatementHeading({ text }: { text: string }) {
+  const words = text.split(/\s+/).filter(Boolean);
+  return (
+    <h2 aria-label={text}>
+      {words.map((word, i) => (
+        <span className="statement-word" aria-hidden="true" key={`${word}-${i}`}>
+          {word}
+          {i < words.length - 1 ? " " : ""}
+        </span>
+      ))}
+    </h2>
+  );
 }
 
 export function HomePage() {
-  useScrollReveal();
+  const frameRef = useRef<HTMLDivElement>(null);
+  useStudioMotion(frameRef);
+
   return (
-    <div className="site-frame" id="top" data-language="en" data-motion="off">
+    <div
+      ref={frameRef}
+      className="site-frame"
+      id="top"
+      data-language="en"
+      data-motion="off"
+    >
       <a className="skip-link" href="#main-content">
         {HOME.skip}
       </a>
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
-        <section className="hero page-shell">
-          <div className="hero-topline">
-            <p className="label">{HOME.hero.eyebrow}</p>
-            <p className="label hero-location">{HOME.hero.location}</p>
-          </div>
-          <div className="hero-stage">
-            <IridescentOrb />
-            <HeroTitle lines={HOME.hero.lines} />
-            <span className="hero-coordinate label" aria-hidden="true">
-              {HOME.hero.coordinate}
-            </span>
-          </div>
-          <div className="hero-bottom">
-            <div>
-              <a className="ghost-link hero-work underlined" href="#work">
-                {HOME.hero.ctaWork}
-                <ArrowDown />
+        <div className="hero-scroll">
+          <section className="hero page-shell" aria-labelledby="hero-title">
+            <div className="hero-topline">
+              <p className="label">{HOME.hero.eyebrow}</p>
+              <p className="label hero-location">{HOME.hero.location}</p>
+            </div>
+            <div className="hero-stage">
+              <IridescentOrb />
+              <HeroTitle lines={HOME.hero.lines} />
+              <span className="hero-coordinate label" aria-hidden="true">
+                {HOME.hero.coordinate}
+              </span>
+            </div>
+            <div className="hero-bottom">
+              <div>
+                <a className="ghost-link hero-work underlined" href="#work">
+                  {HOME.hero.ctaWork}
+                  <ArrowDown />
+                </a>
+              </div>
+              <div>
+                <p className="hero-summary">{HOME.hero.body}</p>
+                <GhostLink href={WA_PRIMARY} className="underlined" external>
+                  {HOME.hero.ctaPrimary}
+                </GhostLink>
+              </div>
+              <a className="scroll-indicator label" href="#about">
+                {HOME.hero.scroll}
+                <ArrowDown size={18} />
               </a>
             </div>
-            <div>
-              <p className="hero-summary">{HOME.hero.body}</p>
-              <GhostLink href={WA_PRIMARY} className="underlined" external>
-                {HOME.hero.ctaPrimary}
-              </GhostLink>
-            </div>
-            <a className="scroll-indicator label" href="#about">
-              {HOME.hero.scroll}
-              <ArrowDown size={18} />
-            </a>
-          </div>
-        </section>
+          </section>
+        </div>
 
         <section id="about" className="page-shell section-space intro-section">
           <div className="section-meta reveal">
@@ -426,7 +163,7 @@ export function HomePage() {
             </a>
           </div>
           <div className="intro-copy reveal">
-            <h2>{HOME.about.h2}</h2>
+            <StatementHeading text={HOME.about.h2} />
             <p>{HOME.about.body}</p>
           </div>
         </section>
@@ -448,7 +185,7 @@ export function HomePage() {
               <Link
                 key={card.slug}
                 href={`/work/${card.slug}`}
-                className="work-card reveal"
+                className="work-card"
                 aria-label={`Read case study: ${card.title}`}
               >
                 <div className="work-card-visual">
@@ -480,9 +217,15 @@ export function HomePage() {
           <p className="label work-footnote">{HOME.work.footnote}</p>
         </section>
 
-        <section className="page-shell section-space bridge-section">
-          <h2 className="depth-title">{HOME.bridge.h2}</h2>
-          <p>{HOME.bridge.body}</p>
+        <section
+          className="editorial-bridge page-shell"
+          aria-labelledby="bridge-title"
+        >
+          <div className="bridge-rule" aria-hidden="true" />
+          <div className="bridge-content">
+            <h2 id="bridge-title">{HOME.bridge.h2}</h2>
+            <p>{HOME.bridge.body}</p>
+          </div>
         </section>
 
         <section id="services" className="page-shell section-space services-section">
@@ -490,15 +233,17 @@ export function HomePage() {
             <p className="label">{HOME.services.meta}</p>
             <span className="label">{HOME.services.metaSide}</span>
           </div>
-          <h2 className="display-heading reveal">
-            {HOME.services.h2[0]}
-            <br />
-            {HOME.services.h2[1]}
-          </h2>
-          <p className="services-subhead reveal">{HOME.services.subhead}</p>
-          <div className="service-rows">
+          <header className="section-heading reveal">
+            <MotionLines
+              className="display-heading"
+              lines={HOME.services.h2}
+              id="services-title"
+            />
+            <p className="services-subhead">{HOME.services.subhead}</p>
+          </header>
+          <div className="service-list">
             {HOME.services.tiers.map((tier) => (
-              <article className="service-row reveal" key={tier.name}>
+              <article className="service-row" key={tier.name}>
                 <p className="label">{tier.number}</p>
                 <div>
                   <h3>{tier.name}</h3>
@@ -543,11 +288,11 @@ export function HomePage() {
             <p className="label">{HOME.process.meta}</p>
             <span className="label">{HOME.process.metaSide}</span>
           </div>
-          <h2 className="display-heading">
-            {HOME.process.h2[0]}
-            <br />
-            {HOME.process.h2[1]}
-          </h2>
+          <MotionLines
+            className="display-heading"
+            lines={HOME.process.h2}
+            id="process-title"
+          />
           <div className="process-grid">
             {HOME.process.steps.map(([title, body], i) => (
               <article key={title}>
@@ -582,11 +327,11 @@ export function HomePage() {
           <div className="faq-layout">
             <div>
               <p className="label">{HOME.faq.meta}</p>
-              <h2 id="faq-title" className="display-heading">
-                {HOME.faq.h2[0]}
-                <br />
-                {HOME.faq.h2[1]}
-              </h2>
+              <MotionLines
+                className="display-heading"
+                lines={HOME.faq.h2}
+                id="faq-title"
+              />
             </div>
             <FaqAccordion />
           </div>
@@ -597,13 +342,11 @@ export function HomePage() {
             <p className="label">{HOME.contact.meta}</p>
           </div>
           <div className="contact-layout">
-            <h2 className="contact-title">
-              {HOME.contact.h2[0]}
-              <br />
-              {HOME.contact.h2[1]}
-              <br />
-              {HOME.contact.h2[2]}
-            </h2>
+            <MotionLines
+              className="contact-title"
+              lines={HOME.contact.h2}
+              id="contact-title"
+            />
             <div className="contact-aside">
               <div className="contact-mark" aria-hidden="true">
                 <span className="contact-colour">
