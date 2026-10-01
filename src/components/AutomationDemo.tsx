@@ -17,18 +17,26 @@ export function AutomationDemo() {
   const choices = answers.map((idx, step) => tree[step].choices[idx]);
   const actionRef = useRef<HTMLDivElement>(null);
 
+  /* Lang toggle remounts choice labels — reset answers without scrolling to demo. */
+  const skipDemoFocusRef = useRef(false);
   useEffect(() => {
+    skipDemoFocusRef.current = true;
     setAnswers([]);
   }, [lang]);
 
-  /* Keep keyboard focus inside the demo after each step (buttons remount). */
+  /* Keep keyboard focus inside the demo after each step (buttons remount).
+     preventScroll: lang toggle must not jump the page to #automation-demo. */
   useEffect(() => {
+    if (skipDemoFocusRef.current) {
+      skipDemoFocusRef.current = false;
+      return;
+    }
     const root = actionRef.current;
     if (!root) return;
     const focusable = root.querySelector<HTMLElement>(
       "button:not([disabled]), a[href]",
     );
-    focusable?.focus();
+    focusable?.focus({ preventScroll: true });
   }, [answers, scenario, done]);
 
   return (

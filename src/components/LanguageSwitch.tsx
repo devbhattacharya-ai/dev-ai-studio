@@ -8,7 +8,13 @@ export function LanguageSwitch() {
     <button
       type="button"
       className="language-switch"
-      onClick={toggleLang}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const y = window.scrollY;
+        toggleLang();
+        requestAnimationFrame(() => window.scrollTo(0, y));
+      }}
       aria-label={lang === "en" ? "Switch to Marathi" : "Switch to English"}
       aria-pressed={lang === "mr"}
     >

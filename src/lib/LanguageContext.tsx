@@ -31,9 +31,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
     document.documentElement.dataset.language = lang;
     const url = new URL(window.location.href);
+    // Never carry a hash into the language URL — toggle must not scroll to sections.
+    url.hash = "";
     if (lang === "mr") url.searchParams.set("lang", "mr");
     else url.searchParams.delete("lang");
-    window.history.replaceState(null, "", url);
+    const y = window.scrollY;
+    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    window.scrollTo(0, y);
   }, [lang]);
 
   const setLang = useCallback((l: Lang) => setLangState(l), []);
