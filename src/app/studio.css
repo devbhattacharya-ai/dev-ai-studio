@@ -362,10 +362,10 @@ button {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  opacity: 0.12;
+  opacity: 0.18;
   background:
     radial-gradient(at 70% 20%, #fff9, transparent 48%),
-    linear-gradient(255deg, #f06ba8, #facb0e 30%, #78bae6 65%, #fff);
+    var(--sphere-gradient);
 }
 
 .hero-coordinate {
@@ -2115,10 +2115,10 @@ button {
 
 @keyframes sphere-sheen-pulse {
   from {
-    opacity: 0.12;
+    opacity: 0.18;
   }
   to {
-    opacity: 0.75;
+    opacity: 0.88;
   }
 }
 
@@ -2228,7 +2228,7 @@ button {
 
   .sphere-sheen {
     animation: none !important;
-    opacity: 0.12;
+    opacity: 0.18;
   }
 
   .orb-scroll {

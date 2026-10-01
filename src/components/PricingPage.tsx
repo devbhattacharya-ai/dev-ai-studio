@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Brand } from "./Brand";
 import { GhostLink } from "./GhostLink";
@@ -13,33 +13,73 @@ import {
   dualMoneyPair,
   formatDualPrice,
   type Currency,
+  type DualMoney,
 } from "@/lib/pricing";
 import { waPricing } from "@/lib/links";
+
+const COUNT_MS = 520;
 
 function DualPrice({
   amounts,
   highlight,
   fromLabel,
+  progress,
 }: {
   amounts: { inr: number; usd: number };
   highlight: Currency;
   fromLabel: string;
+  progress: number;
 }) {
-  const pair = dualMoneyPair(amounts, highlight);
+  const pair = dualMoneyPair(amounts, highlight, progress);
   return (
     <span className="price-dual" data-highlight={highlight}>
       <span className="price-dual-from">{fromLabel}</span>
-      <span className="price-dual-primary">{pair.primary}</span>
+      <span className="price-dual-primary">
+        <span aria-hidden="true">{pair.primary}</span>
+        <span className="sr-only">{pair.primaryFinal}</span>
+      </span>
       <span className="price-dual-sep" aria-hidden="true">
         /
       </span>
-      <span className="price-dual-secondary">{pair.secondary}</span>
+      <span className="price-dual-secondary">
+        <span aria-hidden="true">{pair.secondary}</span>
+        <span className="sr-only">{pair.secondaryFinal}</span>
+      </span>
     </span>
+  );
+}
+
+/** Dual INR+USD line price with count-up; custom/null skips animation. */
+function DualLinePrice({
+  price,
+  customLabel,
+  fromLabel,
+  highlight,
+  progress,
+}: {
+  price: DualMoney;
+  customLabel: string;
+  fromLabel: string;
+  highlight: Currency;
+  progress: number;
+}) {
+  if (price.inr === null && price.usd === null) {
+    return <>{customLabel}</>;
+  }
+  const running = formatDualPrice(price, customLabel, fromLabel, highlight, progress);
+  const final = formatDualPrice(price, customLabel, fromLabel, highlight, 1);
+  return (
+    <>
+      <span aria-hidden="true">{running}</span>
+      <span className="sr-only">{final}</span>
+    </>
   );
 }
 
 export function PricingPage() {
   const [highlight, setHighlight] = useState<Currency>("inr");
+  const [progress, setProgress] = useState(1);
+  const rafRef = useRef<number | null>(null);
   const copy = PRICING_COPY;
 
   useEffect(() => {
@@ -50,8 +90,46 @@ export function PricingPage() {
     } catch {}
   }, []);
 
-  function changeHighlight(next: Currency) {
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => {
+      if (mq.matches) {
+        if (rafRef.current !== null) {
+          window.cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+        setProgress(1);
+      }
+    };
+    mq.addEventListener("change", onChange);
+    return () => {
+      mq.removeEventListener("change", onChange);
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
+
+  /** Matches live pricing `b()` — cancel prior rAF; reduced-motion → 1; else 0→1 over 520ms ease. */
+  function setCurrency(next: Currency) {
+    if (next === highlight) return;
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
     setHighlight(next);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setProgress(1);
+    } else {
+      setProgress(0);
+      const start = window.performance.now();
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / COUNT_MS, 1);
+        setProgress(1 - (1 - t) ** 3);
+        rafRef.current = t < 1 ? window.requestAnimationFrame(tick) : null;
+      };
+      rafRef.current = window.requestAnimationFrame(tick);
+    }
     try {
       window.localStorage.setItem("dev-studio-pricing-currency", next);
     } catch {}
@@ -92,14 +170,14 @@ export function PricingPage() {
               >
                 <button
                   type="button"
-                  onClick={() => changeHighlight("inr")}
+                  onClick={() => setCurrency("inr")}
                   aria-pressed={highlight === "inr"}
                 >
                   INR
                 </button>
                 <button
                   type="button"
-                  onClick={() => changeHighlight("usd")}
+                  onClick={() => setCurrency("usd")}
                   aria-pressed={highlight === "usd"}
                 >
                   USD
@@ -118,6 +196,7 @@ export function PricingPage() {
                   amounts={featured.standard!}
                   highlight={highlight}
                   fromLabel={copy.from}
+                  progress={progress}
                 />
               </p>
               <h2>{copy.standardTitle}</h2>
@@ -132,6 +211,7 @@ export function PricingPage() {
                   amounts={featured.animated!}
                   highlight={highlight}
                   fromLabel={copy.from}
+                  progress={progress}
                 />
               </p>
               <h2>{copy.animatedTitle}</h2>
@@ -159,6 +239,7 @@ export function PricingPage() {
                           amounts={row.standard}
                           highlight={highlight}
                           fromLabel={copy.from}
+                          progress={progress}
                         />
                       ) : (
                         <span className="price-quote">{copy.quoted}</span>
@@ -170,6 +251,7 @@ export function PricingPage() {
                           amounts={row.animated}
                           highlight={highlight}
                           fromLabel={copy.from}
+                          progress={progress}
                         />
                       ) : (
                         <span className="price-quote">{copy.quoted}</span>
@@ -202,7 +284,13 @@ export function PricingPage() {
                   <p>{body}</p>
                 </div>
                 <p className="pricing-line-price">
-                  {formatDualPrice(MOTION_PRICES[i], copy.custom, copy.from, highlight)}
+                  <DualLinePrice
+                    price={MOTION_PRICES[i]}
+                    customLabel={copy.custom}
+                    fromLabel={copy.from}
+                    highlight={highlight}
+                    progress={progress}
+                  />
                 </p>
               </article>
             ))}
@@ -228,7 +316,13 @@ export function PricingPage() {
                   <p>{body}</p>
                 </div>
                 <p className="pricing-line-price">
-                  {formatDualPrice(WA_PRICES[i], copy.custom, copy.from, highlight)}
+                  <DualLinePrice
+                    price={WA_PRICES[i]}
+                    customLabel={copy.custom}
+                    fromLabel={copy.from}
+                    highlight={highlight}
+                    progress={progress}
+                  />
                 </p>
               </article>
             ))}

@@ -29,10 +29,10 @@
   --color-black: #000000;
   --color-white: #ffffff;
 
-  /* Decorative sphere only — not UI chrome */
-  --sphere-yellow: #facb0e;
-  --sphere-pink: #f06ba8;
-  --sphere-blue: #78bae6;
+  /* Decorative sphere only — not UI chrome (live angles; chroma bumped for punch) */
+  --sphere-yellow: #ffd012;
+  --sphere-pink: #ff6bb0;
+  --sphere-blue: #6bc5f0;
   --sphere-gradient: linear-gradient(
     255deg,
     var(--sphere-yellow),

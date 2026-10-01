@@ -20,6 +20,14 @@ export const WA_PRICES = [
   { inr: null, usd: null, from: false },
 ] as const;
 
+export type MoneyValue = number | [number, number] | null;
+
+export type DualMoney = {
+  inr: MoneyValue;
+  usd: MoneyValue;
+  from?: boolean;
+};
+
 export const PRICING_COPY = {
   skip: "Skip to pricing",
   nav: { work: "Selected work", services: "Services", pricing: "Pricing" },
@@ -100,20 +108,26 @@ export function formatMoney(amount: number, currency: Currency) {
   }).format(amount);
 }
 
+/** Animated visible amount — Math.round(amount * progress). */
+export function formatMoneyProgress(amount: number, currency: Currency, progress: number) {
+  return formatMoney(Math.round(amount * progress), currency);
+}
+
 function formatOne(
-  value: number | [number, number] | null,
+  value: MoneyValue,
   currency: Currency,
-  customLabel: string
+  customLabel: string,
+  progress = 1
 ) {
   if (value === null) return customLabel;
   if (Array.isArray(value)) {
-    return `${formatMoney(value[0], currency)}–${formatMoney(value[1], currency)}`;
+    return `${formatMoneyProgress(value[0], currency, progress)}–${formatMoneyProgress(value[1], currency, progress)}`;
   }
-  return formatMoney(value, currency);
+  return formatMoneyProgress(value, currency, progress);
 }
 
 export function formatPrice(
-  price: { inr: number | [number, number] | null; usd: number | [number, number] | null; from?: boolean },
+  price: DualMoney,
   currency: Currency,
   customLabel: string,
   fromLabel: string
@@ -123,16 +137,35 @@ export function formatPrice(
   return price.from ? `${fromLabel} ${formatted}` : formatted;
 }
 
-/** Both currencies visible without switching — e.g. "from ₹9,999 / $109". */
-export function formatDualPrice(
-  price: { inr: number | [number, number] | null; usd: number | [number, number] | null; from?: boolean },
+/** Live-style single-currency price with optional count-up progress. */
+export function formatPriceWithProgress(
+  price: DualMoney,
+  currency: Currency,
   customLabel: string,
   fromLabel: string,
-  highlight: Currency = "inr"
+  progress = 1
+) {
+  const value = price[currency];
+  if (value === null) return customLabel;
+  const formatted = formatOne(value, currency, customLabel, progress);
+  return price.from ? `${fromLabel} ${formatted}` : formatted;
+}
+
+/**
+ * Both currencies visible — e.g. "from ₹9,999 / $109".
+ * When progress < 1, both sides count up (ranges: both ends × progress).
+ * Custom/null: no animation, show custom label.
+ */
+export function formatDualPrice(
+  price: DualMoney,
+  customLabel: string,
+  fromLabel: string,
+  highlight: Currency = "inr",
+  progress = 1
 ) {
   if (price.inr === null && price.usd === null) return customLabel;
-  const inr = formatOne(price.inr, "inr", customLabel);
-  const usd = formatOne(price.usd, "usd", customLabel);
+  const inr = formatOne(price.inr, "inr", customLabel, progress);
+  const usd = formatOne(price.usd, "usd", customLabel, progress);
   const ordered = highlight === "usd" ? `${usd} / ${inr}` : `${inr} / ${usd}`;
   if (price.from) return `${fromLabel} ${ordered}`;
   return ordered;
@@ -140,11 +173,28 @@ export function formatDualPrice(
 
 export function dualMoneyPair(
   amounts: { inr: number; usd: number },
-  highlight: Currency = "inr"
+  highlight: Currency = "inr",
+  progress = 1
 ) {
-  const inr = formatMoney(amounts.inr, "inr");
-  const usd = formatMoney(amounts.usd, "usd");
+  const inr = formatMoneyProgress(amounts.inr, "inr", progress);
+  const usd = formatMoneyProgress(amounts.usd, "usd", progress);
+  const inrFinal = formatMoney(amounts.inr, "inr");
+  const usdFinal = formatMoney(amounts.usd, "usd");
   return highlight === "usd"
-    ? { primary: usd, secondary: inr, primaryCurrency: "usd" as const, secondaryCurrency: "inr" as const }
-    : { primary: inr, secondary: usd, primaryCurrency: "inr" as const, secondaryCurrency: "usd" as const };
+    ? {
+        primary: usd,
+        secondary: inr,
+        primaryFinal: usdFinal,
+        secondaryFinal: inrFinal,
+        primaryCurrency: "usd" as const,
+        secondaryCurrency: "inr" as const,
+      }
+    : {
+        primary: inr,
+        secondary: usd,
+        primaryFinal: inrFinal,
+        secondaryFinal: usdFinal,
+        primaryCurrency: "inr" as const,
+        secondaryCurrency: "usd" as const,
+      };
 }
