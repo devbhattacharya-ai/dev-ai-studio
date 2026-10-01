@@ -1,88 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getCaseChrome } from "@/lib/content";
 import { useLanguage } from "@/lib/LanguageContext";
 import { GhostLink } from "./GhostLink";
 
-type Status = "checking" | "ok" | "unavailable";
-
-function isAuthWalledHost(url: string) {
-  try {
-    const host = new URL(url).hostname;
-    return host.endsWith("chatgpt.site") || host.includes("chatgpt.com");
-  } catch {
-    return false;
-  }
-}
-
 /**
- * Resilient “View live website” pattern:
- * - Local screenshot stays the primary preview (rendered by parent).
- * - Never iframe external demos (auth-walled chatgpt.site returns 401).
- * - Soft reachability; protected hosts skip fetch and show liveFallback.
+ * Case studies always expose Explore → case.url (chatgpt.site demos) in a new tab.
+ * Screenshot + case copy stay in the parent. External demos may still 401 for
+ * anonymous visitors — the link remains clickable either way.
  */
 export function CaseLiveExplore({ liveUrl }: { liveUrl: string }) {
   const { lang } = useLanguage();
   const chrome = getCaseChrome(lang);
-  const protectedHost = isAuthWalledHost(liveUrl);
-  const [status, setStatus] = useState<Status>(
-    protectedHost ? "unavailable" : "checking",
-  );
-
-  useEffect(() => {
-    if (protectedHost) {
-      setStatus("unavailable");
-      return;
-    }
-
-    let cancelled = false;
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 4500);
-
-    fetch(liveUrl, {
-      method: "HEAD",
-      mode: "no-cors",
-      signal: controller.signal,
-      cache: "no-store",
-    })
-      .then(() => {
-        if (!cancelled) setStatus("ok");
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("unavailable");
-      })
-      .finally(() => {
-        window.clearTimeout(timer);
-      });
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-      window.clearTimeout(timer);
-    };
-  }, [liveUrl, protectedHost]);
+  const demoHref = lang === "mr" ? "/?lang=mr#automation-demo" : "/#automation-demo";
 
   return (
     <div className="case-live-explore">
-      {status === "unavailable" ? (
-        <p className="case-live-fallback" role="status">
-          {chrome.liveFallback}
-        </p>
-      ) : null}
-      {!protectedHost ? (
-        <GhostLink href={liveUrl} external srHint={chrome.exploreLiveSr}>
-          {chrome.exploreLive}
-        </GhostLink>
-      ) : (
-        <p className="case-live-note">
-          <span className="label">{chrome.exploreLive}</span>
-          {" — "}
-          external demo is protected; use the screenshot above.
-        </p>
-      )}
-      <Link className="ghost-link" href="/#automation-demo">
+      <GhostLink href={liveUrl} external srHint={chrome.exploreLiveSr}>
+        {chrome.exploreLive}
+      </GhostLink>
+      <Link className="ghost-link" href={demoHref}>
         {chrome.exploreDemo}
       </Link>
     </div>
