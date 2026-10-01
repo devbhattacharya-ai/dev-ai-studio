@@ -25,7 +25,7 @@ export const CASES: CaseStudy[] = [
     title: "BISI BELE.",
     homeTitle: "Bisi Bele",
     image: "/demo-bisi-bele.jpg",
-    url: "https://bisi-bele-kharghar.dev2404.chatgpt.site/",
+    url: "https://temporary-instant-basin-bnmblyr.vercel.app/",
     homeCard: {
       en: "A café website designed for easy menu discovery and ordering.",
     },
@@ -50,7 +50,7 @@ export const CASES: CaseStudy[] = [
     title: "SMILE DENTAL CLINIC.",
     homeTitle: "Smile Dental Clinic",
     image: "/demo-smile-dental.jpg",
-    url: "https://smile-dental-clinic-demo.dev2404.chatgpt.site/",
+    url: "https://temporary-speedy-sable-owpj4uc.vercel.app/",
     homeCard: {
       en: "A bilingual clinic site with a clear appointment journey.",
     },
@@ -78,7 +78,7 @@ export const CASES: CaseStudy[] = [
     title: "AFTERDARK.",
     homeTitle: "AFTERDARK",
     image: "/demo-afterdark.jpg",
-    url: "https://afterdark-chocolate.dev2404.chatgpt.site/",
+    url: "https://temporary-sonic-flurry-baqrxms.vercel.app/",
     homeCard: {
       en: "A cinematic product story for a dark chocolate concept.",
     },
@@ -109,7 +109,7 @@ export const CASES: CaseStudy[] = [
     title: "PINK STATIC.",
     homeTitle: "Pink Static",
     image: "/demo-pink-static.jpg",
-    url: "https://pink-static.dev2404.chatgpt.site/",
+    url: "https://temporary-spry-slate-022in88.vercel.app/",
     homeCard: {
       en: "A graphic streetwear storefront with a campaign-led collection.",
     },
@@ -143,7 +143,7 @@ export const CASES: CaseStudy[] = [
     title: "NUTTY.",
     homeTitle: "Nutty",
     image: "/demo-nutty.jpg",
-    url: "https://nutty-peanut-butter.dev2404.chatgpt.site/",
+    url: "https://temporary-quick-fjord-anjg1oc.vercel.app/",
     homeCard: {
       en: "A bold peanut butter concept with product storytelling and a demo cart.",
     },
