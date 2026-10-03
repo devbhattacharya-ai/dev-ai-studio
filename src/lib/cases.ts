@@ -21,28 +21,28 @@ export type CaseStudy = {
 
 export const CASES: CaseStudy[] = [
   {
-    slug: "bisi-bele",
-    title: "BISI BELE.",
-    homeTitle: "Bisi Bele",
-    image: "/demo-bisi-bele.jpg",
-    url: "https://bisi-bele-dev-eaee.vercel.app/",
+    slug: "rowdy-momo",
+    title: "ROWDY MOMO.",
+    homeTitle: "Rowdy Momo Cafe",
+    image: "/demo-rowdy-momo.jpg",
+    url: "https://rowdy-momo-cafe.vercel.app/",
     homeCard: {
-      en: "A café website designed for easy menu discovery and ordering.",
+      en: "A dark café site. The steamer leads, the menu scrolls with you, and order or reserve is one tap.",
     },
     en: {
-      sector: "Restaurant / Kharghar",
-      deck: "Make the food the reason to stay. Make the next step easy to find.",
+      sector: "Nepali café / Bandra West",
+      deck: "A loud, food-first café site. Steam, plates, and a table you can book.",
       problem:
-        "A local restaurant visitor usually wants a quick answer: what can I eat, where is it, and how do I take the next step? A food website needs to satisfy curiosity without burying those essentials.",
+        "A momo counter gets lost when the menu, the story, and the way to order sit on different pages. People on a phone want the plate first, then a way to order or find the room.",
       solution:
-        "A food-first concept pairs the restaurant story with menu discovery and a clear route towards a visit or order enquiry.",
+        "A dark, poster-led website puts the steamer up front, then a scroll-linked menu, the café story, and a reserve form in one journey.",
       features: [
-        ["Food-led identity", "Original food imagery gives the menu a distinct visual presence."],
-        ["Menu discovery", "A focused journey helps visitors explore what is on offer."],
-        ["Local context", "Location and practical information support the decision to visit."],
+        ["Food-led identity", "Studio plates of steam, jhol, crisp, and cold coffee carry the brand."],
+        ["Scroll menu", "The platter moves with the scroll, so the menu feels like a counter, not a list."],
+        ["Order and reserve", "One red Order button and a reserve form keep the next step obvious."],
       ],
       outcome:
-        "The aim is to help visitors move from browsing food to a useful action. Menu engagement, contact clicks and order enquiries would be meaningful measures in a live client project.",
+        "The aim is to take someone from the hero plate to an order or a reserved table. Menu opens, order taps, and reserve sends would be the live measures.",
     },
   },
   {
