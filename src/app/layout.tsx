@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Devanagari } from "next/font/google";
+import Script from "next/script";
+import { GaPageView } from "@/components/GaPageView";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { META } from "@/lib/content";
 import "./globals.css";
+
+const GA_MEASUREMENT_ID = "G-B9VQKK1B38";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -56,6 +60,14 @@ export default function RootLayout({
             'var(--font-inter), "Inter", var(--font-noto-devanagari), "Noto Sans Devanagari", Arial, sans-serif',
         }}
       >
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`}
+        </Script>
+        <GaPageView />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
