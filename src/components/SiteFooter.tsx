@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { LanguageSwitch } from "./LanguageSwitch";
+import { InstagramIcon } from "./Icons";
+import { INSTAGRAM_URL } from "@/lib/links";
 import { getHome } from "@/lib/content";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -23,6 +25,16 @@ export function SiteFooter() {
           <Link className="ghost-link" href={`/project-notes?lang=${lang}`}>
             {HOME.footer.notes}
           </Link>
+          <a
+            className="ghost-link instagram-link"
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Dev AI Studio on Instagram"
+          >
+            <InstagramIcon size={16} />
+            <span>Instagram</span>
+          </a>
           <LanguageSwitch />
           <a className="ghost-link" href="#top">
             {HOME.footer.backTop}
