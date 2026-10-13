@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getHome } from "@/lib/content";
 import { useLanguage } from "@/lib/LanguageContext";
-import { waPrimary, PHONE_TEL } from "@/lib/links";
+import { waPrimary, PHONE_TEL, INSTAGRAM_URL } from "@/lib/links";
 import { useStudioMotion } from "@/hooks/useStudioMotion";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
@@ -13,7 +13,7 @@ import { GhostLink } from "./GhostLink";
 import { FaqAccordion } from "./FaqAccordion";
 import { AutomationDemo } from "./AutomationDemo";
 import { ProjectGuideFab } from "./ProjectGuideFab";
-import { ArrowUpRight, ArrowDown } from "./Icons";
+import { ArrowUpRight, ArrowDown, InstagramIcon } from "./Icons";
 
 function HeroTitle({
   lines,
@@ -373,6 +373,16 @@ export function HomePage() {
               <a className="ghost-link" href={PHONE_TEL}>
                 {HOME.contact.ctaCall}{" "}
                 <span className="muted-phone">{HOME.contact.phone}</span>
+              </a>
+              <a
+                className="ghost-link instagram-link"
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Dev AI Studio on Instagram"
+              >
+                <span>Instagram</span>
+                <InstagramIcon size={18} />
               </a>
             </div>
           </div>

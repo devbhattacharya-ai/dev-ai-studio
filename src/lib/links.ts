@@ -47,3 +47,5 @@ export function waDemo(scenario: string) {
 }
 
 export const WA_CONTACT_PLAIN = "https://wa.me/917738400373";
+
+export const INSTAGRAM_URL = "https://www.instagram.com/dev.ai.studio/";
