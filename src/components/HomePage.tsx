@@ -14,6 +14,7 @@ import { FaqAccordion } from "./FaqAccordion";
 import { AutomationDemo } from "./AutomationDemo";
 import { ProjectGuideFab } from "./ProjectGuideFab";
 import { ArrowUpRight, ArrowDown, InstagramIcon } from "./Icons";
+import { ContactForm } from "./ContactForm";
 
 function HeroTitle({
   lines,
@@ -367,6 +368,7 @@ export function HomePage() {
                 </span>
               </div>
               <p>{HOME.contact.body}</p>
+              <ContactForm />
               <GhostLink href={wa} className="contact-whatsapp underlined" external>
                 {HOME.contact.ctaWhatsapp}
               </GhostLink>
