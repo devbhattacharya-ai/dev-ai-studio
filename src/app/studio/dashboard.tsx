@@ -67,15 +67,24 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
   }, []);
 
   useEffect(() => {
-    setLive(data.liveBase);
-    const id = window.setInterval(() => {
-      setLive((current) => {
-        const next = current + (Math.random() > 0.5 ? 1 : -1);
-        return Math.min(data.liveBase + 6, Math.max(3, next));
-      });
-    }, 4000);
-    return () => window.clearInterval(id);
-  }, [data.liveBase]);
+    let stop = false;
+    async function pull() {
+      try {
+        const res = await fetch("/studio/live", { cache: "no-store" });
+        if (!res.ok) return;
+        const body = (await res.json()) as { active?: number };
+        if (!stop && typeof body.active === "number") setLive(body.active);
+      } catch {
+        /* keep the last real count */
+      }
+    }
+    void pull();
+    const id = window.setInterval(pull, 30000);
+    return () => {
+      stop = true;
+      window.clearInterval(id);
+    };
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -144,7 +153,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
           <p className="bd-kicker">DevAI.</p>
           <h1>Website overview</h1>
           <p className="bd-muted">
-            {data.fromLabel} – {data.toLabel}. Sample model of devaistudio.in. Only you can open this page.
+            {data.fromLabel} – {data.toLabel}. Real Google Analytics for devaistudio.in. Only you can open this page.
           </p>
         </div>
         <div className="bd-actions">
@@ -196,7 +205,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
             <article className="bd-live">
               <p>Active now</p>
               <strong>{formatNumber(live)}</strong>
-              <span>On the site right now</span>
+              <span>{live > 0 ? "On the site right now" : "Nobody on the site right now"}</span>
             </article>
             <article>
               <p>Bounce rate</p>
@@ -211,7 +220,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
           </section>
           <section className="bd-signals">
             <p>Pageviews <strong>{formatNumber(data.pageviews)}</strong></p>
-            <p>WhatsApp starts <strong>{formatNumber(data.whatsapp)}</strong></p>
+            <p>Outbound clicks <strong>{formatNumber(data.whatsapp)}</strong></p>
             <p>Pricing views <strong>{formatNumber(data.pricingViews)}</strong></p>
           </section>
           <section className="bd-grid">
@@ -294,7 +303,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
                     <span>{city.name}</span>
                     <b>{formatNumber(city.count)}</b>
                     <div>
-                      <i style={{ width: `${(city.count / data.cities[0].count) * 100}%` }} />
+                      <i style={{ width: `${data.cities[0]?.count ? (city.count / data.cities[0].count) * 100 : 0}%` }} />
                     </div>
                   </li>
                 ))}
@@ -306,7 +315,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
               {data.devices.map((device) => (
                 <li key={device.name}>
                   <span>{device.name}</span>
-                  <b>{formatPercent(device.count / data.visitors, 0)}</b>
+                  <b>{formatPercent(data.visitors ? device.count / data.visitors : 0, 0)}</b>
                 </li>
               ))}
             </ul>
@@ -344,7 +353,7 @@ export function StudioDashboard({ board }: { board: Record<RangeKey, StudioSnaps
                 </span>
                 <b>{formatNumber(step.count)}</b>
                 <div>
-                  <i style={{ width: `${(step.count / data.funnel[0].count) * 100}%` }} />
+                  <i style={{ width: `${data.funnel[0].count ? (step.count / data.funnel[0].count) * 100 : 0}%` }} />
                 </div>
               </li>
             ))}

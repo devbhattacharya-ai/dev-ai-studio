@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { studioConfigured, studioUnlocked } from "@/lib/studio-gate";
-import { buildStudioBoard } from "@/lib/studio-data";
+import { buildStudioBoard } from "@/lib/studio-live";
 import { LoginForm } from "./login-form";
 import { StudioDashboard } from "./dashboard";
 import "./board.css";
@@ -27,5 +27,18 @@ export default async function StudioPage() {
 
   if (!(await studioUnlocked())) return <LoginForm />;
 
-  return <StudioDashboard board={buildStudioBoard()} />;
+  try {
+    return <StudioDashboard board={await buildStudioBoard()} />;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Google Analytics did not return numbers.";
+    return (
+      <main className="bd">
+        <section className="bd-gate">
+          <p className="bd-kicker">DevAI Studio</p>
+          <h1>Analytics is not ready</h1>
+          <p className="bd-muted">{message}</p>
+        </section>
+      </main>
+    );
+  }
 }
