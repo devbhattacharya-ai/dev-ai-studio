@@ -18,17 +18,23 @@ type GaReport = { rows?: GaRow[] };
 let tokenCache: { value: string; exp: number } | null = null;
 let boardCache: { at: number; board: Record<RangeKey, StudioSnapshot> } | null = null;
 
+function readEnv(name: string) {
+  const value = process.env[name];
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function account(): ServiceAccount {
-  const raw = process.env.GA4_SERVICE_ACCOUNT;
+  let raw = readEnv("GA4_SERVICE_ACCOUNT");
   if (!raw) throw new Error("Google Analytics is not connected yet.");
+  if (!raw.startsWith("{")) raw = Buffer.from(raw, "base64").toString("utf8");
   const parsed = JSON.parse(raw) as ServiceAccount;
   if (!parsed.client_email || !parsed.private_key) throw new Error("Google Analytics key is incomplete.");
-  if (!parsed.private_key.includes("BEGIN")) parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
+  parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
   return parsed;
 }
 
 function propertyId() {
-  const id = (process.env.GA4_PROPERTY_ID ?? "").replace(/\D/g, "");
+  const id = readEnv("GA4_PROPERTY_ID").replace(/\D/g, "");
   if (!id) throw new Error("Google Analytics property is not set.");
   return id;
 }
