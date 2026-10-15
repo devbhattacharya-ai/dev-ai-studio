@@ -15,6 +15,8 @@ function Tracker() {
   const isFirst = useRef(true);
 
   useEffect(() => {
+    if (pathname.startsWith("/studio")) return;
+
     const query = searchParams.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
 

@@ -1,0 +1,300 @@
+body:has(.bd) {
+  background: #0a0a0a;
+  color: #f4f4f5;
+}
+
+.bd {
+  min-height: 100dvh;
+  background: #0a0a0a;
+  color: #f4f4f5;
+  color-scheme: dark;
+  padding: 24px clamp(16px, 3vw, 40px) 72px;
+}
+
+.bd :focus-visible {
+  outline-color: #ffd700;
+}
+
+.bd h1,
+.bd h2,
+.bd p,
+.bd strong {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.bd h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.05;
+  margin-top: 4px;
+}
+
+.bd h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.bd-kicker {
+  color: #ffd700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bd-muted,
+.bd small {
+  color: #a1a1aa;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.bd-top,
+.bd-actions,
+.bd-nav,
+.bd-ranges,
+.bd-signals,
+.bd-sources li,
+.bd-bars li,
+.bd-funnel li {
+  display: flex;
+  gap: 12px;
+}
+
+.bd-top {
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.bd-actions,
+.bd-nav,
+.bd-ranges,
+.bd-signals {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bd-nav {
+  margin-bottom: 20px;
+}
+
+.bd-nav button,
+.bd-ranges button,
+.bd-ghost,
+.bd-primary {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(244, 244, 245, 0.14);
+}
+
+.bd-nav button[aria-current="page"],
+.bd-ranges button[aria-pressed="true"],
+.bd-primary {
+  background: #ffd700;
+  color: #0a0a0a;
+  border-color: #ffd700;
+}
+
+.bd-ghost {
+  color: #f4f4f5;
+}
+
+.bd-search input,
+.bd input[type="password"],
+.bd table input {
+  min-height: 44px;
+  width: min(100%, 280px);
+  border-radius: 10px;
+  border: 1px solid rgba(244, 244, 245, 0.16);
+  background: #161616;
+  color: #f4f4f5;
+  padding: 0 12px;
+}
+
+.bd-kpis,
+.bd-grid,
+.bd-signals {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bd-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bd-signals,
+.bd-grid {
+  grid-template-columns: 1.4fr 0.8fr;
+}
+
+.bd-signals {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bd-kpis article,
+.bd-panel,
+.bd-signals p,
+.bd-gate {
+  background: #161616;
+  border: 1px solid rgba(244, 244, 245, 0.1);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.bd-kpis strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 32px;
+}
+
+.bd-live {
+  box-shadow: inset -4px 0 0 #ffd700;
+}
+
+.bd-live strong {
+  color: #ffd700;
+}
+
+.bd-up {
+  color: #4ade80;
+}
+
+.bd-down {
+  color: #f87171;
+}
+
+.bd-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bd-axis,
+.bd-sources li,
+.bd-bars li,
+.bd-funnel li {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bd-axis {
+  color: #a1a1aa;
+  font-size: 12px;
+}
+
+.bd-sources {
+  display: grid;
+  gap: 12px;
+}
+
+.bd-sources i,
+.bd-bars i,
+.bd-funnel i {
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: #ffd700;
+}
+
+.bd-sources i {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+}
+
+.bd-bars,
+.bd-funnel {
+  display: grid;
+  gap: 14px;
+}
+
+.bd-bars div,
+.bd-funnel div {
+  grid-column: 1 / -1;
+  height: 8px;
+  border-radius: 99px;
+  background: #1e1e1e;
+  overflow: hidden;
+}
+
+.bd-bars li,
+.bd-funnel li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.bd-table-wrap {
+  overflow-x: auto;
+}
+
+.bd table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+  text-align: left;
+}
+
+.bd th,
+.bd td {
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(244, 244, 245, 0.08);
+  vertical-align: middle;
+}
+
+.bd th {
+  color: #a1a1aa;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bd td b,
+.bd td small {
+  display: block;
+}
+
+.bd table input {
+  width: 100%;
+}
+
+.bd-gate {
+  width: min(100%, 420px);
+  margin: 12vh auto 0;
+  display: grid;
+  gap: 12px;
+}
+
+.bd-gate h1 {
+  font-size: 36px;
+}
+
+.bd-error {
+  color: #f87171;
+}
+
+.bd-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: #ffd700;
+  color: #0a0a0a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .bd-kpis,
+  .bd-grid,
+  .bd-signals {
+    grid-template-columns: 1fr;
+  }
+
+  .bd-ranges button {
+    padding-inline: 10px;
+  }
+}
