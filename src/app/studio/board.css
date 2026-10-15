@@ -287,6 +287,19 @@ body:has(.bd) {
   font-weight: 700;
 }
 
+.bd-install {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border: 1px solid #3a3208;
+  background: #141208;
+  color: #f4f4f5;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 @media (max-width: 900px) {
   .bd-kpis,
   .bd-grid,

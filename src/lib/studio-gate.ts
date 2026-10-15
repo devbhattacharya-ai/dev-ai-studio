@@ -32,7 +32,7 @@ export async function studioUnlocked() {
   return timingSafeEqual(given, want);
 }
 
-export function sessionCookie(maxAge = 60 * 60 * 24 * 30) {
+export function sessionCookie(maxAge = 60 * 60 * 24 * 400) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
