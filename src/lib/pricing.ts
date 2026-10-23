@@ -5,22 +5,22 @@ import { PRICING_MR } from "./mr-packs";
 export type Currency = "inr" | "usd";
 
 export const WEBSITE_TIERS = [
-  { pages: "01", standard: { inr: 9999, usd: 109 }, animated: { inr: 14999, usd: 159 } },
-  { pages: "03", standard: { inr: 19900, usd: 219 }, animated: { inr: 34900, usd: 369 } },
-  { pages: "05", standard: { inr: 27900, usd: 299 }, animated: { inr: 49900, usd: 529 } },
+  { pages: "01", standard: { inr: 7999, usd: 84 }, animated: { inr: 12999, usd: 137 } },
+  { pages: "03", standard: { inr: 17900, usd: 189 }, animated: { inr: 32900, usd: 347 } },
+  { pages: "05", standard: { inr: 25900, usd: 273 }, animated: { inr: 47900, usd: 505 } },
   { pages: "06+", standard: null, animated: null },
 ] as const;
 
 export const MOTION_PRICES = [
-  { inr: [3000, 5000] as [number, number], usd: [35, 55] as [number, number] },
-  { inr: [8000, 15000] as [number, number], usd: [89, 159] as [number, number] },
+  { inr: [1000, 3000] as [number, number], usd: [11, 32] as [number, number] },
+  { inr: [6000, 13000] as [number, number], usd: [63, 137] as [number, number] },
   { inr: null, usd: null },
 ] as const;
 
 export const WA_PRICES = [
-  { inr: 2900, usd: 35, from: false },
-  { inr: 12900, usd: 139, from: true },
-  { inr: 19900, usd: 219, from: true },
+  { inr: 900, usd: 9, from: false },
+  { inr: 10900, usd: 115, from: true },
+  { inr: 17900, usd: 189, from: true },
   { inr: null, usd: null, from: false },
 ] as const;
 
@@ -162,7 +162,7 @@ export function formatPriceWithProgress(
 }
 
 /**
- * Both currencies visible — e.g. "from ₹9,999 / $109".
+ * Both currencies visible — e.g. "from ₹7,999 / $84".
  * When progress < 1, both sides count up (ranges: both ends × progress).
  * Custom/null: no animation, show custom label.
  */
