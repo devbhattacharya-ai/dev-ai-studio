@@ -1,172 +1,128 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PHONE = "(max-width: 760px)";
-const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-const MS = 560;
-const BAR = 48;
-
-type Spot = { left: number; top: number; width: number; height: number };
 
 /**
- * Header switches can pin to the top center on a phone while scrolling.
- * Footer switches stay where they are.
+ * On a phone, the header switch slides to the top centre once you scroll.
+ * It stays in the sticky header (no fixed positioning), so the page cannot jump.
  */
 export function LanguageSwitch({ pin = false }: { pin?: boolean }) {
   const { lang, toggleLang } = useLanguage();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const slotRef = useRef<HTMLSpanElement>(null);
-  const phase = useRef<"rest" | "docked">("rest");
-  const [fixed, setFixed] = useState(false);
-  const [vacant, setVacant] = useState(false);
-  const [style, setStyle] = useState<CSSProperties>();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!pin) return;
+    const button = buttonRef.current;
+    const slot = slotRef.current;
+    if (!button || !slot) return;
+
     const mq = window.matchMedia(PHONE);
-    let timer = 0;
-    let frame = 0;
+    const header = button.closest(".site-header, .pricing-header, .case-nav");
+    if (!(header instanceof HTMLElement)) return;
 
-    const paint = (spot: Spot, transition: boolean) => {
-      setFixed(true);
-      setStyle({
-        position: "fixed",
-        left: spot.left,
-        top: spot.top,
-        width: spot.width,
-        height: spot.height,
-        margin: 0,
-        zIndex: 60,
-        transition: transition
-          ? `left ${MS}ms ${EASE}, top ${MS}ms ${EASE}, width ${MS}ms ${EASE}, height ${MS}ms ${EASE}`
-          : "none",
-      });
-    };
+    let docked = false;
 
-    const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const release = () => {
-      phase.current = "rest";
-      setFixed(false);
-      setVacant(false);
-      setStyle(undefined);
-      if (slotRef.current) slotRef.current.style.cssText = "";
+    const clear = () => {
+      docked = false;
+      button.classList.remove("is-armed");
+      button.style.removeProperty("--lang-rest-x");
+      button.style.removeProperty("--lang-rest-y");
+      button.style.removeProperty("--lang-dx");
+      button.style.removeProperty("--lang-dy");
+      slot.style.removeProperty("width");
+      slot.style.removeProperty("height");
       delete document.documentElement.dataset.langDock;
-      const y = window.scrollY || document.documentElement.scrollTop;
-      if (mq.matches && y > 24) {
-        frame = window.requestAnimationFrame(() => dock());
-      }
     };
 
-    const dock = () => {
-      if (!mq.matches || phase.current === "docked") return;
-      const button = buttonRef.current;
-      if (!button) return;
-      const rect = button.getBoundingClientRect();
-      const start: Spot = {
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height,
-      };
-      const slot = slotRef.current;
-      if (slot) {
-        slot.style.width = `${rect.width}px`;
-        slot.style.height = `${rect.height}px`;
-      }
-      phase.current = "docked";
-      if (reduced()) {
-        const width = start.width;
-        paint(
-          {
-            left: (window.innerWidth - width) / 2,
-            top: 0,
-            width,
-            height: BAR,
-          },
-          false,
-        );
-        setVacant(true);
-        document.documentElement.dataset.langDock = "1";
+    const measure = () => {
+      if (!mq.matches) {
+        clear();
         return;
       }
-      paint(start, false);
-      setVacant(true);
-      frame = window.requestAnimationFrame(() => {
-        button.getBoundingClientRect();
-        frame = window.requestAnimationFrame(() => {
-          const width = button.offsetWidth || start.width;
-          paint(
-            {
-              left: (window.innerWidth - width) / 2,
-              top: 0,
-              width,
-              height: BAR,
-            },
-            true,
-          );
-          document.documentElement.dataset.langDock = "1";
-        });
-      });
-    };
-
-    const undock = () => {
-      if (phase.current !== "docked") return;
-      const slot = slotRef.current;
-      const button = buttonRef.current;
-      window.clearTimeout(timer);
-      if (!slot || !button || reduced()) {
-        release();
-        return;
-      }
-      setVacant(false);
-      slot.classList.remove("is-vacant");
-      const rect = slot.getBoundingClientRect();
-      const headerShift = document.documentElement.dataset.langDock === "1" ? BAR : 0;
-      paint(
-        {
-          left: rect.left,
-          top: Math.max(0, rect.top - headerShift),
-          width: rect.width || button.offsetWidth,
-          height: rect.height || button.offsetHeight,
-        },
-        true,
-      );
-      delete document.documentElement.dataset.langDock;
-      timer = window.setTimeout(release, MS);
+      const dockNow = docked || document.documentElement.dataset.langDock === "1";
+      const headerTransition = header.style.transition;
+      const buttonTransition = button.style.transition;
+      header.style.transition = "none";
+      button.style.transition = "none";
+      button.classList.remove("is-armed");
+      if (dockNow) delete document.documentElement.dataset.langDock;
+      const buttonBox = button.getBoundingClientRect();
+      const headerBox = header.getBoundingClientRect();
+      const x = buttonBox.left - headerBox.left;
+      const y = buttonBox.top - headerBox.top;
+      const dx = header.clientWidth / 2 - x - buttonBox.width / 2;
+      const dy = 10 - y;
+      slot.style.width = `${buttonBox.width}px`;
+      slot.style.height = `${buttonBox.height}px`;
+      button.style.setProperty("--lang-rest-x", `${x}px`);
+      button.style.setProperty("--lang-rest-y", `${y}px`);
+      button.style.setProperty("--lang-dx", `${dx}px`);
+      button.style.setProperty("--lang-dy", `${dy}px`);
+      button.classList.add("is-armed");
+      if (dockNow) document.documentElement.dataset.langDock = "1";
+      header.getBoundingClientRect();
+      header.style.transition = headerTransition;
+      button.style.transition = buttonTransition;
     };
 
     const onScroll = () => {
-      if (!mq.matches) {
-        if (phase.current !== "rest") release();
+      if (!mq.matches || !button.classList.contains("is-armed")) {
+        if (docked) {
+          docked = false;
+          delete document.documentElement.dataset.langDock;
+        }
         return;
       }
       const y = window.scrollY || document.documentElement.scrollTop;
-      if (y > 24) dock();
-      else if (y < 8) undock();
+      if (!docked && y > 36) {
+        docked = true;
+        document.documentElement.dataset.langDock = "1";
+      } else if (docked && y < 10) {
+        docked = false;
+        delete document.documentElement.dataset.langDock;
+      }
     };
 
+    let width = window.innerWidth;
+    const onResize = () => {
+      if (Math.abs(window.innerWidth - width) < 40) return;
+      width = window.innerWidth;
+      measure();
+    };
+    const onMode = () => {
+      width = window.innerWidth;
+      measure();
+      onScroll();
+    };
+
+    measure();
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    mq.addEventListener("change", onScroll);
+    window.addEventListener("resize", onResize);
+    mq.addEventListener("change", onMode);
+    let cancelled = false;
+    document.fonts?.ready.then(() => {
+      if (!cancelled) measure();
+    });
     return () => {
+      cancelled = true;
       window.removeEventListener("scroll", onScroll);
-      mq.removeEventListener("change", onScroll);
-      window.cancelAnimationFrame(frame);
-      window.clearTimeout(timer);
-      delete document.documentElement.dataset.langDock;
+      window.removeEventListener("resize", onResize);
+      mq.removeEventListener("change", onMode);
+      clear();
     };
-  }, [pin]);
+  }, [pin, lang]);
 
   return (
-    <span ref={slotRef} className={vacant ? "language-switch-slot is-vacant" : "language-switch-slot"}>
+    <span ref={slotRef} className="language-switch-slot">
       <button
         ref={buttonRef}
         type="button"
-        className={fixed ? "language-switch is-pinned" : "language-switch"}
-        style={style}
+        className="language-switch"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
