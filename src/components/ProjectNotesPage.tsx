@@ -17,7 +17,7 @@ export function ProjectNotesPage() {
         <Link className="ghost-link" href={homeHref}>
           {NOTES.back}
         </Link>
-        <LanguageSwitch />
+        <LanguageSwitch pin />
       </nav>
       <header className="case-hero">
         <p className="label">{NOTES.label}</p>

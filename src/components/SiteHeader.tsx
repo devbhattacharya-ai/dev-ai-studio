@@ -31,7 +31,7 @@ export function SiteHeader() {
         </Link>
       </nav>
       <div className="header-actions">
-        <LanguageSwitch />
+        <LanguageSwitch pin />
         <a
           className="ghost-link header-contact"
           href={waPrimary(lang)}

@@ -236,6 +236,66 @@ a:focus-visible .rolling-label > span {
   color: var(--muted);
 }
 
+.language-switch-slot {
+  display: inline-flex;
+  align-items: center;
+}
+
+.language-switch.is-pinned {
+  justify-content: center;
+  background: var(--parchment);
+}
+
+.language-switch.is-pinned::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: -1;
+  height: 48px;
+  pointer-events: none;
+  background: var(--parchment);
+  border-bottom: 1px solid var(--ash);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+html[data-lang-dock="1"] .language-switch.is-pinned::before {
+  opacity: 1;
+}
+
+@media (width <= 760px) {
+  .language-switch-slot.is-vacant {
+    width: 0 !important;
+    min-width: 0;
+    height: 0 !important;
+    overflow: hidden;
+  }
+
+  .site-header,
+  .pricing-header,
+  .case-nav {
+    transition: top 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html[data-lang-dock="1"] .site-header,
+  html[data-lang-dock="1"] .pricing-header,
+  html[data-lang-dock="1"] .case-nav {
+    top: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-switch.is-pinned,
+  .language-switch.is-pinned::before,
+  .site-header,
+  .pricing-header,
+  .case-nav {
+    transition: none;
+  }
+}
+
 /* Hero */
 .hero-scroll {
   position: relative;

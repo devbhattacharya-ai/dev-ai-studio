@@ -104,7 +104,7 @@ export function PricingPage() {
           </Link>
           <span aria-current="page">{copy.nav.pricing}</span>
         </nav>
-        <LanguageSwitch />
+        <LanguageSwitch pin />
       </header>
       <main id="pricing-main" tabIndex={-1} className="page-shell">
         <section id="websites" className="pricing-section pricing-websites">

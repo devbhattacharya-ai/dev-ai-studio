@@ -28,7 +28,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
         <Link className="ghost-link" href={workHref}>
           ← {chrome.selectedWork}
         </Link>
-        <LanguageSwitch />
+        <LanguageSwitch pin />
       </nav>
       <main id="case-content" tabIndex={-1} aria-labelledby="case-title">
         <header className="case-hero">
