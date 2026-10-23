@@ -1666,14 +1666,20 @@ a:focus-visible .rolling-label > span {
 }
 
 .pricing-table .price-dual-from {
-  font-size: 13px;
-  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
   order: 2;
 }
 
 .pricing-table .price-dual-primary {
-  font-size: 28px;
-  letter-spacing: -0.04em;
+  font-size: clamp(36px, 3.8vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+  color: var(--ink);
 }
 
 .pricing-table .price-dual-sep {
@@ -1681,9 +1687,11 @@ a:focus-visible .rolling-label > span {
 }
 
 .pricing-table .price-dual-secondary {
-  font-size: 16px;
-  color: var(--muted);
-  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .pricing-featured h2 {
@@ -1694,8 +1702,9 @@ a:focus-visible .rolling-label > span {
 }
 
 .pricing-more-heading {
-  font-size: 28px;
-  font-weight: 400;
+  font-size: clamp(34px, 4vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
   margin-bottom: 18px;
 }
 
@@ -1714,10 +1723,10 @@ a:focus-visible .rolling-label > span {
 
 .pricing-table thead th {
   border-bottom: 1px solid var(--ink);
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: 15px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .pricing-table tbody th {
@@ -1736,13 +1745,16 @@ a:focus-visible .rolling-label > span {
 
 .pricing-table small,
 .price-quote {
-  color: var(--muted);
-  font-size: 14px;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .pricing-fineprint {
-  color: var(--muted);
-  font-size: 14px;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.45;
   margin-top: 16px;
   max-width: 70ch;
 }
@@ -1781,25 +1793,28 @@ a:focus-visible .rolling-label > span {
 }
 
 .pricing-line h3 {
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  margin-bottom: 8px;
 }
 
-.pricing-line p {
-  color: var(--muted);
-  font-size: 15px;
-  max-width: 48ch;
+.pricing-line p:not(.pricing-line-price) {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.45;
+  max-width: 52ch;
 }
 
 .pricing-line-price {
-  font-size: 17px;
-  letter-spacing: -0.02em;
+  font-size: clamp(30px, 3.2vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
   white-space: normal;
   text-align: right;
-  max-width: 18ch;
-  color: var(--ink) !important;
+  max-width: 11em;
+  color: var(--ink);
 }
 
 .pricing-end {
@@ -2137,6 +2152,9 @@ a:focus-visible .rolling-label > span {
 
   .pricing-line-price {
     white-space: normal;
+    text-align: left;
+    max-width: none;
+    font-size: clamp(30px, 8vw, 42px);
   }
 }
 
