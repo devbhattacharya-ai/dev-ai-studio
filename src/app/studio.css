@@ -2373,3 +2373,48 @@ a:focus-visible .rolling-label > span {
   color: var(--muted);
   max-width: 46ch;
 }
+
+.running-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.running-num-visual {
+  display: inline;
+}
+
+.running-char,
+.running-reel {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.running-char {
+  white-space: pre;
+}
+
+.running-reel {
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.running-reel-strip {
+  display: flex;
+  flex-direction: column;
+}
+
+.running-reel-strip > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+.running-reel[data-phase="run"] .running-reel-strip {
+  transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .running-reel-strip {
+    transition: none;
+  }
+}

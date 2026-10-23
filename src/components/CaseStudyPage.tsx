@@ -9,6 +9,7 @@ import { waCase } from "@/lib/links";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { GhostLink } from "./GhostLink";
 import { CaseLiveExplore } from "./CaseLiveExplore";
+import { RunningText } from "./RunningText";
 
 export function CaseStudyPage({ slug }: { slug: string }) {
   const { lang } = useLanguage();
@@ -50,21 +51,27 @@ export function CaseStudyPage({ slug }: { slug: string }) {
           <figcaption>{chrome.previewLabel}</figcaption>
         </figure>
         <section className="case-story">
-          <p className="label">{chrome.problemLabel}</p>
+          <p className="label">
+            <RunningText text={chrome.problemLabel} />
+          </p>
           <div>
             <h2>{chrome.problemH}</h2>
             <p>{copy.problem}</p>
           </div>
         </section>
         <section className="case-story">
-          <p className="label">{chrome.solutionLabel}</p>
+          <p className="label">
+            <RunningText text={chrome.solutionLabel} />
+          </p>
           <div>
             <h2>{chrome.solutionH}</h2>
             <p>{copy.solution}</p>
             <div className="case-feature-list">
               {copy.features.map(([title, body], i) => (
                 <article key={title}>
-                  <span className="label">0{i + 1}</span>
+                  <span className="label">
+                    <RunningText text={`0${i + 1}`} />
+                  </span>
                   <div>
                     <h3>{title}</h3>
                     <p>{body}</p>
@@ -75,13 +82,17 @@ export function CaseStudyPage({ slug }: { slug: string }) {
           </div>
         </section>
         <section className="case-mobile-note">
-          <p className="label">{chrome.exploreLabel}</p>
+          <p className="label">
+            <RunningText text={chrome.exploreLabel} />
+          </p>
           <h2>{chrome.exploreH}</h2>
           <p>{chrome.exploreBody}</p>
           <CaseLiveExplore liveUrl={study.url} />
         </section>
         <section className="case-story">
-          <p className="label">{chrome.outcomeLabel}</p>
+          <p className="label">
+            <RunningText text={chrome.outcomeLabel} />
+          </p>
           <div>
             <h2>{chrome.outcomeH}</h2>
             <p>{copy.outcome}</p>

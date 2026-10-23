@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown } from "./Icons";
 import { getHome } from "@/lib/content";
 import { useLanguage } from "@/lib/LanguageContext";
+import { RunningText } from "./RunningText";
 
 /**
  * Accordion UX with all Q&As always present in the DOM (SSR-safe).
@@ -28,7 +29,10 @@ export function FaqAccordion() {
               onClick={() => setOpen(isOpen ? null : i)}
             >
               <span>
-                <span className="label">0{i + 1}</span> {q}
+                <span className="label">
+                  <RunningText text={`0${i + 1}`} />
+                </span>{" "}
+                {q}
               </span>
               <ChevronDown />
             </button>

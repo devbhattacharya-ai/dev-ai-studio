@@ -5,6 +5,7 @@ import { LanguageSwitch } from "./LanguageSwitch";
 import { getNotes } from "@/lib/content";
 import { useLanguage } from "@/lib/LanguageContext";
 import { WA_CONTACT_PLAIN } from "@/lib/links";
+import { RunningText } from "./RunningText";
 
 export function ProjectNotesPage() {
   const { lang } = useLanguage();
@@ -24,7 +25,9 @@ export function ProjectNotesPage() {
       </header>
       {NOTES.sections.map(([title, body], i) => (
         <section className="case-story" key={title}>
-          <p className="label">0{i + 1}</p>
+          <p className="label">
+            <RunningText text={`0${i + 1}`} />
+          </p>
           <div>
             <h2>{title}</h2>
             <p>{body}</p>

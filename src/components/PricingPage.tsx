@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Brand } from "./Brand";
 import { GhostLink } from "./GhostLink";
 import { ArrowUpRight } from "./Icons";
+import { RunningText } from "./RunningText";
 import {
   getPricingCopy,
   WEBSITE_TIERS,
@@ -19,63 +20,48 @@ import { waPricing } from "@/lib/links";
 import { useLanguage } from "@/lib/LanguageContext";
 import { LanguageSwitch } from "./LanguageSwitch";
 
-const COUNT_MS = 520;
-
 function DualPrice({
   amounts,
   highlight,
   fromLabel,
-  progress,
 }: {
   amounts: { inr: number; usd: number };
   highlight: Currency;
   fromLabel: string;
-  progress: number;
 }) {
-  const pair = dualMoneyPair(amounts, highlight, progress);
+  const pair = dualMoneyPair(amounts, highlight, 1);
   return (
     <span className="price-dual" data-highlight={highlight}>
       <span className="price-dual-from">{fromLabel}</span>
       <span className="price-dual-primary">
-        <span aria-hidden="true">{pair.primary}</span>
-        <span className="sr-only">{pair.primaryFinal}</span>
+        <RunningText text={pair.primaryFinal} />
       </span>
       <span className="price-dual-sep" aria-hidden="true">
         /
       </span>
       <span className="price-dual-secondary">
-        <span aria-hidden="true">{pair.secondary}</span>
-        <span className="sr-only">{pair.secondaryFinal}</span>
+        <RunningText text={pair.secondaryFinal} />
       </span>
     </span>
   );
 }
 
-/** Dual INR+USD line price with count-up; custom/null skips animation. */
 function DualLinePrice({
   price,
   customLabel,
   fromLabel,
   highlight,
-  progress,
 }: {
   price: DualMoney;
   customLabel: string;
   fromLabel: string;
   highlight: Currency;
-  progress: number;
 }) {
   if (price.inr === null && price.usd === null) {
     return <>{customLabel}</>;
   }
-  const running = formatDualPrice(price, customLabel, fromLabel, highlight, progress);
   const final = formatDualPrice(price, customLabel, fromLabel, highlight, 1);
-  return (
-    <>
-      <span aria-hidden="true">{running}</span>
-      <span className="sr-only">{final}</span>
-    </>
-  );
+  return <RunningText text={final} />;
 }
 
 export function PricingPage() {
@@ -83,8 +69,6 @@ export function PricingPage() {
   const copy = getPricingCopy(lang);
   const q = lang === "mr" ? "?lang=mr" : "";
   const [highlight, setHighlight] = useState<Currency>("inr");
-  const [progress, setProgress] = useState(1);
-  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     try {
@@ -94,46 +78,9 @@ export function PricingPage() {
     } catch {}
   }, []);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const onChange = () => {
-      if (mq.matches) {
-        if (rafRef.current !== null) {
-          window.cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
-        setProgress(1);
-      }
-    };
-    mq.addEventListener("change", onChange);
-    return () => {
-      mq.removeEventListener("change", onChange);
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, []);
-
-  /** Matches live pricing `b()` — cancel prior rAF; reduced-motion → 1; else 0→1 over 520ms ease. */
   function setCurrency(next: Currency) {
     if (next === highlight) return;
-    if (rafRef.current !== null) {
-      window.cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
     setHighlight(next);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setProgress(1);
-    } else {
-      setProgress(0);
-      const start = window.performance.now();
-      const tick = (now: number) => {
-        const t = Math.min((now - start) / COUNT_MS, 1);
-        setProgress(1 - (1 - t) ** 3);
-        rafRef.current = t < 1 ? window.requestAnimationFrame(tick) : null;
-      };
-      rafRef.current = window.requestAnimationFrame(tick);
-    }
     try {
       window.localStorage.setItem("dev-studio-pricing-currency", next);
     } catch {}
@@ -201,7 +148,6 @@ export function PricingPage() {
                   amounts={featured.standard!}
                   highlight={highlight}
                   fromLabel={copy.from}
-                  progress={progress}
                 />
               </p>
               <h2>{copy.standardTitle}</h2>
@@ -216,7 +162,6 @@ export function PricingPage() {
                   amounts={featured.animated!}
                   highlight={highlight}
                   fromLabel={copy.from}
-                  progress={progress}
                 />
               </p>
               <h2>{copy.animatedTitle}</h2>
@@ -237,14 +182,15 @@ export function PricingPage() {
               <tbody>
                 {WEBSITE_TIERS.slice(1).map((row) => (
                   <tr key={row.pages}>
-                    <th scope="row">{row.pages}</th>
+                    <th scope="row">
+                      <RunningText text={row.pages} />
+                    </th>
                     <td>
                       {row.standard ? (
                         <DualPrice
                           amounts={row.standard}
                           highlight={highlight}
                           fromLabel={copy.from}
-                          progress={progress}
                         />
                       ) : (
                         <span className="price-quote">{copy.quoted}</span>
@@ -256,7 +202,6 @@ export function PricingPage() {
                           amounts={row.animated}
                           highlight={highlight}
                           fromLabel={copy.from}
-                          progress={progress}
                         />
                       ) : (
                         <span className="price-quote">{copy.quoted}</span>
@@ -273,7 +218,9 @@ export function PricingPage() {
 
         <section className="pricing-section">
           <div className="section-meta">
-            <p className="label">{copy.motionLabel}</p>
+            <p className="label">
+              <RunningText text={copy.motionLabel} />
+            </p>
             <span className="label">{copy.motionSide}</span>
           </div>
           <div className="pricing-section-heading">
@@ -283,7 +230,9 @@ export function PricingPage() {
           <div className="pricing-lines">
             {copy.motionRows.map(([name, body], i) => (
               <article className="pricing-line" key={name}>
-                <span className="label">0{i + 1}</span>
+                <span className="label">
+                  <RunningText text={`0${i + 1}`} />
+                </span>
                 <div>
                   <h3>{name}</h3>
                   <p>{body}</p>
@@ -294,7 +243,6 @@ export function PricingPage() {
                     customLabel={copy.custom}
                     fromLabel={copy.from}
                     highlight={highlight}
-                    progress={progress}
                   />
                 </p>
               </article>
@@ -305,7 +253,9 @@ export function PricingPage() {
 
         <section className="pricing-section">
           <div className="section-meta">
-            <p className="label">{copy.waLabel}</p>
+            <p className="label">
+              <RunningText text={copy.waLabel} />
+            </p>
             <span className="label">{copy.waSide}</span>
           </div>
           <div className="pricing-section-heading">
@@ -315,7 +265,9 @@ export function PricingPage() {
           <div className="pricing-lines">
             {copy.waRows.map(([name, body], i) => (
               <article className="pricing-line" key={name}>
-                <span className="label">0{i + 1}</span>
+                <span className="label">
+                  <RunningText text={`0${i + 1}`} />
+                </span>
                 <div>
                   <h3>{name}</h3>
                   <p>{body}</p>
@@ -326,7 +278,6 @@ export function PricingPage() {
                     customLabel={copy.custom}
                     fromLabel={copy.from}
                     highlight={highlight}
-                    progress={progress}
                   />
                 </p>
               </article>

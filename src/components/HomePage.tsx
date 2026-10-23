@@ -14,6 +14,7 @@ import { FaqAccordion } from "./FaqAccordion";
 import { AutomationDemo } from "./AutomationDemo";
 import { ProjectGuideFab } from "./ProjectGuideFab";
 import { ArrowUpRight, ArrowDown, InstagramIcon } from "./Icons";
+import { RunningText } from "./RunningText";
 
 function HeroTitle({
   lines,
@@ -182,8 +183,12 @@ export function HomePage() {
 
         <section id="work" className="page-shell section-space work-section">
           <div className="section-meta">
-            <p className="label">{HOME.work.meta}</p>
-            <span className="label">{HOME.work.year}</span>
+            <p className="label">
+              <RunningText text={HOME.work.meta} />
+            </p>
+            <span className="label">
+              <RunningText text={HOME.work.year} />
+            </span>
           </div>
           <div className="work-heading">
             <div>
@@ -212,11 +217,15 @@ export function HomePage() {
                     {card.isNew ? (
                       <span className="work-card-badge">{HOME.work.badgeNew}</span>
                     ) : null}
-                    <span className="work-card-badge">{HOME.work.year}</span>
+                    <span className="work-card-badge">
+                      <RunningText text={HOME.work.year} />
+                    </span>
                   </div>
                 </div>
                 <div className="work-card-copy">
-                  <p className="label">{card.number}</p>
+                  <p className="label">
+                    <RunningText text={card.number} />
+                  </p>
                   <div className="work-card-title-row">
                     <h3>{card.title}</h3>
                     <ArrowUpRight size={22} />
@@ -242,7 +251,9 @@ export function HomePage() {
 
         <section id="services" className="page-shell section-space services-section">
           <div className="section-meta reveal">
-            <p className="label">{HOME.services.meta}</p>
+            <p className="label">
+              <RunningText text={HOME.services.meta} />
+            </p>
             <span className="label">{HOME.services.metaSide}</span>
           </div>
           <header className="section-heading reveal">
@@ -256,7 +267,9 @@ export function HomePage() {
           <div className="service-list">
             {HOME.services.tiers.map((tier) => (
               <article className="service-row" key={tier.name}>
-                <p className="label">{tier.number}</p>
+                <p className="label">
+                  <RunningText text={tier.number} />
+                </p>
                 <div>
                   <h3>{tier.name}</h3>
                 </div>
@@ -284,7 +297,9 @@ export function HomePage() {
             <div className="outcomes-grid">
               {HOME.outcomes.items.map(([title, body], i) => (
                 <article key={title}>
-                  <p className="label">0{i + 1}</p>
+                  <p className="label">
+                    <RunningText text={`0${i + 1}`} />
+                  </p>
                   <h4>{title}</h4>
                   <p>{body}</p>
                 </article>
@@ -297,7 +312,9 @@ export function HomePage() {
 
         <section id="process" className="page-shell section-space process-section">
           <div className="section-meta">
-            <p className="label">{HOME.process.meta}</p>
+            <p className="label">
+              <RunningText text={HOME.process.meta} />
+            </p>
             <span className="label">{HOME.process.metaSide}</span>
           </div>
           <MotionLines
@@ -308,7 +325,9 @@ export function HomePage() {
           <div className="process-grid">
             {HOME.process.steps.map(([title, body], i) => (
               <article key={title}>
-                <p className="process-number">0{i + 1}</p>
+                <p className="process-number">
+                  <RunningText text={`0${i + 1}`} />
+                </p>
                 <h3>{title}</h3>
                 <p>{body}</p>
               </article>
@@ -338,7 +357,9 @@ export function HomePage() {
         <section className="page-shell section-space faq-section" aria-labelledby="faq-title">
           <div className="faq-layout">
             <div>
-              <p className="label">{HOME.faq.meta}</p>
+              <p className="label">
+                <RunningText text={HOME.faq.meta} />
+              </p>
               <MotionLines
                 className="display-heading"
                 lines={HOME.faq.h2}
@@ -351,7 +372,9 @@ export function HomePage() {
 
         <section id="contact" className="page-shell section-space contact-section">
           <div className="section-meta">
-            <p className="label">{HOME.contact.meta}</p>
+            <p className="label">
+              <RunningText text={HOME.contact.meta} />
+            </p>
           </div>
           <div className="contact-layout">
             <MotionLines

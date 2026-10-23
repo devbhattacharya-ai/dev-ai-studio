@@ -6,6 +6,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { waDemo } from "@/lib/links";
 import { GhostLink } from "./GhostLink";
 import { RotateCcw } from "./Icons";
+import { RunningText } from "./RunningText";
 
 export function AutomationDemo() {
   const { lang } = useLanguage();
@@ -60,7 +61,9 @@ export function AutomationDemo() {
           <ol className="automation-steps">
             {HOME.demo.steps.map((step, i) => (
               <li key={step} data-current={Math.min(answers.length, 2) === i}>
-                <span>0{i + 1}</span>
+                <span>
+                  <RunningText text={`0${i + 1}`} />
+                </span>
                 {step}
               </li>
             ))}
@@ -118,7 +121,7 @@ export function AutomationDemo() {
                 {answers[r] !== undefined ? (
                   <p className="chat-message chat-customer">
                     <small>{HOME.demo.youLabel}</small>
-                    {turn.choices[answers[r]]}
+                    <RunningText text={turn.choices[answers[r]]} />
                   </p>
                 ) : null}
               </div>
@@ -150,7 +153,7 @@ export function AutomationDemo() {
                     type="button"
                     onClick={() => setAnswers((prev) => [...prev, idx])}
                   >
-                    {choice} →
+                    <RunningText text={choice} /> →
                   </button>
                 ))}
               </div>
