@@ -139,13 +139,29 @@ button {
 
 /* Header */
 .site-header {
-  position: relative;
-  z-index: 20;
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 30px;
   min-height: var(--header-min-height);
+  background: var(--parchment);
+}
+
+.site-header::before,
+.pricing-header::before,
+.case-nav::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: var(--parchment);
   border-bottom: 1px solid var(--ash);
 }
 
@@ -1633,12 +1649,15 @@ a:focus-visible .rolling-label > span {
 
 /* Pricing */
 .pricing-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
   min-height: 105px;
-  border-bottom: 1px solid var(--ash);
+  background: var(--parchment);
 }
 
 .pricing-header-links {
@@ -1970,11 +1989,14 @@ a:focus-visible .rolling-label > span {
 }
 
 .case-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 88px;
-  border-bottom: 1px solid var(--ash);
+  background: var(--parchment);
 }
 
 .case-hero {
