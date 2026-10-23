@@ -419,21 +419,27 @@ a:focus-visible .rolling-label > span {
     var(--sphere-gradient);
 }
 
-/* Radiant bloom behind the hero sphere only. Core sits under the orb. */
-.hero-orbit .orb-scroll::before {
+/* Light halo wider than the sphere, so it reads on parchment. */
+.hero-orbit::before {
   content: "";
   position: absolute;
-  inset: -62%;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  width: 168%;
+  height: 168%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgba(255, 208, 18, 0.42) 0%,
-    rgba(255, 107, 176, 0.22) 24%,
-    rgba(107, 197, 240, 0.16) 42%,
-    rgba(229, 228, 224, 0) 68%
+    rgba(255, 248, 230, 0.95) 0%,
+    rgba(255, 210, 120, 0.72) 28%,
+    rgba(255, 140, 190, 0.5) 46%,
+    rgba(130, 206, 245, 0.38) 60%,
+    rgba(255, 220, 170, 0) 78%
   );
-  filter: blur(26px);
+  filter: blur(28px);
 }
 
 .hero-coordinate {
