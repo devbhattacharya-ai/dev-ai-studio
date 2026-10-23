@@ -1083,6 +1083,34 @@ a:focus-visible .rolling-label > span {
   text-align: left;
 }
 
+.faq-q {
+  display: grid;
+  grid-template-columns: 2.4em minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+}
+
+.faq-index {
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.faq-index .running-num,
+.faq-index .running-num-visual {
+  display: inline-flex;
+  align-items: center;
+  height: 1em;
+  line-height: 1;
+}
+
+.faq-index .running-reel {
+  vertical-align: top;
+}
+
 .faq-trigger svg {
   color: var(--muted);
   transition: transform 0.2s;

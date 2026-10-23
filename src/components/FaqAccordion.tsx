@@ -28,11 +28,11 @@ export function FaqAccordion() {
               id={`faq-trigger-${i}`}
               onClick={() => setOpen(isOpen ? null : i)}
             >
-              <span>
-                <span className="label">
+              <span className="faq-q">
+                <span className="label faq-index">
                   <RunningText text={`0${i + 1}`} />
-                </span>{" "}
-                {q}
+                </span>
+                <span className="faq-question">{q}</span>
               </span>
               <ChevronDown />
             </button>
