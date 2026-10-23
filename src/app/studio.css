@@ -243,43 +243,53 @@ a:focus-visible .rolling-label > span {
 }
 
 @media (width <= 760px) {
-  .language-switch.is-armed {
-    position: absolute;
-    z-index: 5;
-    left: var(--lang-rest-x);
-    top: var(--lang-rest-y);
-    transform: translate3d(0, 0, 0);
-    background: var(--parchment);
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  html[data-lang-dock="1"] .language-switch.is-armed {
-    transform: translate3d(
-      var(--lang-dx),
-      calc(var(--lang-dy) + env(safe-area-inset-top, 0px)),
-      0
-    );
-  }
-
   .site-header,
   .pricing-header,
   .case-nav {
-    transition: padding-top 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html[data-lang-dock="1"] .site-header .language-switch,
+  html[data-lang-dock="1"] .pricing-header .language-switch,
+  html[data-lang-dock="1"] .case-nav .language-switch {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    margin: 0;
+    padding: 0 16px;
+    font-size: 15px;
+    background: var(--parchment);
+    border-bottom: 1px solid var(--ash);
+    animation: lang-bar-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   html[data-lang-dock="1"] .site-header,
   html[data-lang-dock="1"] .pricing-header,
   html[data-lang-dock="1"] .case-nav {
-    padding-top: calc(52px + env(safe-area-inset-top, 0px));
+    top: 48px;
+  }
+}
+
+@keyframes lang-bar-in {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .language-switch.is-armed,
-  .site-header,
-  .pricing-header,
-  .case-nav {
-    transition: none;
+  html[data-lang-dock="1"] .site-header .language-switch,
+  html[data-lang-dock="1"] .pricing-header .language-switch,
+  html[data-lang-dock="1"] .case-nav .language-switch {
+    animation: none;
   }
 }
 

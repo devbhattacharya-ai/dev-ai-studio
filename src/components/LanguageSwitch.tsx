@@ -1,126 +1,51 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PHONE = "(max-width: 760px)";
 
 /**
- * On a phone, the header switch slides to the top centre once you scroll.
- * It stays in the sticky header (no fixed positioning), so the page cannot jump.
+ * On a phone, the header switch becomes a bar fixed to the top of the screen
+ * once you scroll, and it stays there. Footer switches are left alone.
  */
 export function LanguageSwitch({ pin = false }: { pin?: boolean }) {
   const { lang, toggleLang } = useLanguage();
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const slotRef = useRef<HTMLSpanElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!pin) return;
-    const button = buttonRef.current;
-    const slot = slotRef.current;
-    if (!button || !slot) return;
-
     const mq = window.matchMedia(PHONE);
-    const header = button.closest(".site-header, .pricing-header, .case-nav");
-    if (!(header instanceof HTMLElement)) return;
-
     let docked = false;
 
-    const clear = () => {
-      docked = false;
-      button.classList.remove("is-armed");
-      button.style.removeProperty("--lang-rest-x");
-      button.style.removeProperty("--lang-rest-y");
-      button.style.removeProperty("--lang-dx");
-      button.style.removeProperty("--lang-dy");
-      slot.style.removeProperty("width");
-      slot.style.removeProperty("height");
-      delete document.documentElement.dataset.langDock;
-    };
-
-    const measure = () => {
-      if (!mq.matches) {
-        clear();
-        return;
-      }
-      const dockNow = docked || document.documentElement.dataset.langDock === "1";
-      const headerTransition = header.style.transition;
-      const buttonTransition = button.style.transition;
-      header.style.transition = "none";
-      button.style.transition = "none";
-      button.classList.remove("is-armed");
-      if (dockNow) delete document.documentElement.dataset.langDock;
-      const buttonBox = button.getBoundingClientRect();
-      const headerBox = header.getBoundingClientRect();
-      const x = buttonBox.left - headerBox.left;
-      const y = buttonBox.top - headerBox.top;
-      const dx = header.clientWidth / 2 - x - buttonBox.width / 2;
-      const dy = 10 - y;
-      slot.style.width = `${buttonBox.width}px`;
-      slot.style.height = `${buttonBox.height}px`;
-      button.style.setProperty("--lang-rest-x", `${x}px`);
-      button.style.setProperty("--lang-rest-y", `${y}px`);
-      button.style.setProperty("--lang-dx", `${dx}px`);
-      button.style.setProperty("--lang-dy", `${dy}px`);
-      button.classList.add("is-armed");
-      if (dockNow) document.documentElement.dataset.langDock = "1";
-      header.getBoundingClientRect();
-      header.style.transition = headerTransition;
-      button.style.transition = buttonTransition;
+    const apply = (next: boolean) => {
+      docked = next;
+      if (next) document.documentElement.dataset.langDock = "1";
+      else delete document.documentElement.dataset.langDock;
     };
 
     const onScroll = () => {
-      if (!mq.matches || !button.classList.contains("is-armed")) {
-        if (docked) {
-          docked = false;
-          delete document.documentElement.dataset.langDock;
-        }
+      if (!mq.matches) {
+        if (docked) apply(false);
         return;
       }
       const y = window.scrollY || document.documentElement.scrollTop;
-      if (!docked && y > 36) {
-        docked = true;
-        document.documentElement.dataset.langDock = "1";
-      } else if (docked && y < 10) {
-        docked = false;
-        delete document.documentElement.dataset.langDock;
-      }
+      if (!docked && y > 28) apply(true);
+      else if (docked && y < 8) apply(false);
     };
 
-    let width = window.innerWidth;
-    const onResize = () => {
-      if (Math.abs(window.innerWidth - width) < 40) return;
-      width = window.innerWidth;
-      measure();
-    };
-    const onMode = () => {
-      width = window.innerWidth;
-      measure();
-      onScroll();
-    };
-
-    measure();
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-    mq.addEventListener("change", onMode);
-    let cancelled = false;
-    document.fonts?.ready.then(() => {
-      if (!cancelled) measure();
-    });
+    mq.addEventListener("change", onScroll);
     return () => {
-      cancelled = true;
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      mq.removeEventListener("change", onMode);
-      clear();
+      mq.removeEventListener("change", onScroll);
+      apply(false);
     };
-  }, [pin, lang]);
+  }, [pin]);
 
   return (
-    <span ref={slotRef} className="language-switch-slot">
+    <span className="language-switch-slot">
       <button
-        ref={buttonRef}
         type="button"
         className="language-switch"
         onClick={(e) => {
