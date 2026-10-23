@@ -437,63 +437,64 @@ a:focus-visible .rolling-label > span {
 }
 
 .hero-orbit::before {
-  width: 210%;
-  height: 210%;
+  width: 176%;
+  height: 176%;
+  opacity: 0.42;
   background:
-    radial-gradient(circle at 32% 36%, rgba(255, 236, 160, 0.95) 0%, rgba(255, 196, 70, 0.55) 24%, transparent 50%),
-    radial-gradient(circle at 70% 64%, rgba(255, 110, 176, 0.72) 0%, transparent 44%),
-    radial-gradient(circle at 46% 74%, rgba(110, 198, 245, 0.6) 0%, transparent 46%),
-    radial-gradient(circle at 50% 50%, rgba(255, 246, 220, 0.5) 0%, transparent 64%);
-  filter: blur(24px);
+    radial-gradient(circle at 32% 36%, rgba(255, 236, 160, 0.55) 0%, rgba(255, 196, 70, 0.28) 24%, transparent 50%),
+    radial-gradient(circle at 70% 64%, rgba(255, 110, 176, 0.34) 0%, transparent 44%),
+    radial-gradient(circle at 46% 74%, rgba(110, 198, 245, 0.28) 0%, transparent 46%),
+    radial-gradient(circle at 50% 50%, rgba(255, 246, 220, 0.22) 0%, transparent 64%);
+  filter: blur(28px);
   animation: sun-bleed 16s linear infinite;
 }
 
 .hero-orbit::after {
-  width: 150%;
-  height: 150%;
+  width: 128%;
+  height: 128%;
   background: radial-gradient(
     circle at 34% 40%,
-    rgba(255, 252, 235, 0.95) 0%,
-    rgba(255, 186, 90, 0.55) 28%,
-    rgba(255, 140, 186, 0.28) 48%,
+    rgba(255, 252, 235, 0.5) 0%,
+    rgba(255, 186, 90, 0.26) 28%,
+    rgba(255, 140, 186, 0.14) 48%,
     transparent 68%
   );
-  filter: blur(16px);
+  filter: blur(20px);
   animation: sun-core 7.5s ease-in-out infinite;
 }
 
 @keyframes sun-bleed {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg) scale(0.86);
-    filter: blur(18px);
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.94);
+    filter: blur(26px);
   }
   25% {
-    transform: translate(-50%, -50%) rotate(90deg) scale(1.2);
-    filter: blur(42px);
+    transform: translate(-50%, -50%) rotate(90deg) scale(1.06);
+    filter: blur(34px);
   }
   50% {
-    transform: translate(-50%, -50%) rotate(180deg) scale(0.94);
-    filter: blur(22px);
+    transform: translate(-50%, -50%) rotate(180deg) scale(0.96);
+    filter: blur(28px);
   }
   75% {
-    transform: translate(-50%, -50%) rotate(270deg) scale(1.24);
-    filter: blur(46px);
+    transform: translate(-50%, -50%) rotate(270deg) scale(1.08);
+    filter: blur(36px);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg) scale(0.86);
-    filter: blur(18px);
+    transform: translate(-50%, -50%) rotate(360deg) scale(0.94);
+    filter: blur(26px);
   }
 }
 
 @keyframes sun-core {
   0%,
   100% {
-    transform: translate(-58%, -42%) scale(0.78);
-    opacity: 0.72;
+    transform: translate(-54%, -46%) scale(0.9);
+    opacity: 0.45;
   }
   50% {
-    transform: translate(-36%, -64%) scale(1.22);
-    opacity: 1;
+    transform: translate(-42%, -58%) scale(1.06);
+    opacity: 0.7;
   }
 }
 
