@@ -1858,6 +1858,10 @@ a:focus-visible .rolling-label > span {
   letter-spacing: -0.02em;
 }
 
+.pricing-cell-label {
+  display: none;
+}
+
 .pricing-fineprint {
   color: var(--ink);
   font-size: 17px;
@@ -2450,6 +2454,17 @@ a:focus-visible .rolling-label > span {
     top: 49%;
   }
 
+  .hero-orbit::before {
+    width: 118%;
+    height: 118%;
+    opacity: 0.28;
+  }
+
+  .hero-orbit::after {
+    width: 104%;
+    height: 104%;
+  }
+
   .hero-coordinate {
     font-size: 9px;
     bottom: 32px;
@@ -2468,8 +2483,80 @@ a:focus-visible .rolling-label > span {
   }
 
   .hero-orbit {
-    width: min(72vw, 360px);
-    left: 65%;
+    width: min(52vw, 220px);
+    left: 78%;
+    top: 42%;
+  }
+
+  .hero-orbit::before {
+    width: 112%;
+    height: 112%;
+    opacity: 0.26;
+  }
+
+  .hero-orbit::after {
+    width: 100%;
+    height: 100%;
+  }
+
+  .pricing-table thead {
+    display: none;
+  }
+
+  .pricing-table,
+  .pricing-table tbody,
+  .pricing-table tr,
+  .pricing-table th,
+  .pricing-table td {
+    display: block;
+    width: auto;
+  }
+
+  .pricing-table tr {
+    border-bottom: 1px solid var(--ash);
+    padding: 6px 0 16px;
+  }
+
+  .pricing-table tbody th,
+  .pricing-table td {
+    border-bottom: 0;
+    padding: 6px 0;
+  }
+
+  .pricing-table tbody th {
+    font-size: 48px;
+  }
+
+  .pricing-cell-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pricing-table .price-dual {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15em 0.4em;
+  }
+
+  .pricing-table .price-dual-from {
+    order: 0;
+  }
+
+  .pricing-table .price-dual-sep {
+    display: inline;
+  }
+
+  .pricing-table .price-dual-primary {
+    font-size: 28px;
+  }
+
+  .pricing-table .price-dual-secondary {
+    font-size: 18px;
   }
 
   [data-language="mr"] .hero-title {
@@ -2492,17 +2579,29 @@ a:focus-visible .rolling-label > span {
 }
 
 .running-num {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
+  line-height: 1;
+  vertical-align: baseline;
 }
 
 .running-num-visual {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0;
+  line-height: 1;
+  user-select: none;
 }
 
 .running-char,
 .running-reel {
   display: inline-block;
-  vertical-align: bottom;
+  letter-spacing: 0;
+  line-height: 1;
+  vertical-align: baseline;
 }
 
 .running-char {
@@ -2510,9 +2609,21 @@ a:focus-visible .rolling-label > span {
 }
 
 .running-reel {
+  width: 1ch;
   height: 1em;
   overflow: hidden;
-  line-height: 1;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.running-num-copy {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: transparent;
+  letter-spacing: 0;
+  white-space: nowrap;
+  user-select: all;
 }
 
 .running-reel-strip {

@@ -186,9 +186,7 @@ export function HomePage() {
             <p className="label">
               <RunningText text={HOME.work.meta} />
             </p>
-            <span className="label">
-              <RunningText text={HOME.work.year} />
-            </span>
+            <span className="label">{HOME.work.year}</span>
           </div>
           <div className="work-heading">
             <div>
@@ -217,9 +215,7 @@ export function HomePage() {
                     {card.isNew ? (
                       <span className="work-card-badge">{HOME.work.badgeNew}</span>
                     ) : null}
-                    <span className="work-card-badge">
-                      <RunningText text={HOME.work.year} />
-                    </span>
+                    <span className="work-card-badge">{HOME.work.year}</span>
                   </div>
                 </div>
                 <div className="work-card-copy">

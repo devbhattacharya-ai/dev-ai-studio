@@ -121,7 +121,7 @@ export function AutomationDemo() {
                 {answers[r] !== undefined ? (
                   <p className="chat-message chat-customer">
                     <small>{HOME.demo.youLabel}</small>
-                    <RunningText text={turn.choices[answers[r]]} />
+                    {turn.choices[answers[r]]}
                   </p>
                 ) : null}
               </div>
@@ -153,7 +153,7 @@ export function AutomationDemo() {
                     type="button"
                     onClick={() => setAnswers((prev) => [...prev, idx])}
                   >
-                    <RunningText text={choice} /> →
+                    {choice} →
                   </button>
                 ))}
               </div>

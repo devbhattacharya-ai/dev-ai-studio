@@ -186,6 +186,7 @@ export function PricingPage() {
                       <RunningText text={row.pages} />
                     </th>
                     <td>
+                      <span className="pricing-cell-label">{copy.standard}</span>
                       {row.standard ? (
                         <DualPrice
                           amounts={row.standard}
@@ -197,6 +198,7 @@ export function PricingPage() {
                       )}
                     </td>
                     <td>
+                      <span className="pricing-cell-label">{copy.animated}</span>
                       {row.animated ? (
                         <DualPrice
                           amounts={row.animated}

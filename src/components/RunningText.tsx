@@ -74,7 +74,7 @@ export function RunningText({ text }: { text: string }) {
           );
         })}
       </span>
-      <span className="sr-only">{text}</span>
+      <span className="running-num-copy">{text}</span>
     </span>
   );
 }
