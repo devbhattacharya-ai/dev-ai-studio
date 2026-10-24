@@ -238,6 +238,25 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
               );
             }
           });
+
+          /* Staggered scroll: each card lags the one before it. */
+          workSection.querySelectorAll<HTMLElement>(".work-card").forEach((card, index) => {
+            const travel = (desktopCards ? 64 : 36) + index * (desktopCards ? 34 : 18);
+            gsap.fromTo(
+              card,
+              { y: travel },
+              {
+                y: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 98%",
+                  end: "top 58%",
+                  scrub: 0.75,
+                },
+              },
+            );
+          });
         }
 
         const bridge = root.querySelector(".editorial-bridge");
@@ -301,33 +320,58 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
         });
 
         if (root.querySelector(".service-list") && root.querySelector(".service-row")) {
-          gsap.from(".service-row", {
-            x: 40,
-            opacity: 0,
-            stagger: 0.18,
-            duration: 0.8,
-            clearProps: "all",
-            scrollTrigger: {
-              trigger: ".service-list",
-              start: "top 88%",
-              once: true,
-            },
+          root.querySelectorAll<HTMLElement>(".service-row").forEach((row, index) => {
+            const travel = 52 + index * 42;
+            gsap.fromTo(
+              row,
+              { y: travel },
+              {
+                y: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: row,
+                  start: "top 96%",
+                  end: "top 55%",
+                  scrub: 0.7,
+                },
+              },
+            );
           });
         }
 
-        if (root.querySelector(".process-grid") && root.querySelector(".process-number")) {
-          gsap.from(".process-number", {
-            yPercent: 35,
-            opacity: 0,
-            stagger: 0.15,
-            duration: 0.9,
-            ease: "power3.out",
-            clearProps: "all",
-            scrollTrigger: {
-              trigger: ".process-grid",
-              start: "top 88%",
-              once: true,
+        root.querySelectorAll<HTMLElement>(".outcomes-grid article").forEach((item, index) => {
+          gsap.fromTo(
+            item,
+            { y: 24 + index * 28 },
+            {
+              y: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 94%",
+                end: "top 64%",
+                scrub: 0.6,
+              },
             },
+          );
+        });
+
+        if (root.querySelector(".process-grid article")) {
+          root.querySelectorAll<HTMLElement>(".process-grid article").forEach((step, index) => {
+            gsap.fromTo(
+              step,
+              { y: 36 + index * 56 },
+              {
+                y: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: step,
+                  start: "top 96%",
+                  end: "top 60%",
+                  scrub: 0.7,
+                },
+              },
+            );
           });
         }
 
