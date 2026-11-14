@@ -66,6 +66,10 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
         lenis = null;
       }
       ScrollTrigger.getAll().forEach((t) => t.kill());
+      root.querySelectorAll(".intro-portrait-build").forEach((node) => node.remove());
+      root.querySelectorAll<HTMLElement>(".intro-portrait img").forEach((img) => {
+        img.style.visibility = "";
+      });
       active = false;
       killed = false;
     };
@@ -280,36 +284,61 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
         }
 
         const portrait = root.querySelector(".intro-portrait");
-        if (portrait) {
-          gsap.from(portrait, {
-            y: 16,
-            opacity: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            clearProps: "opacity,transform",
-            scrollTrigger: {
-              trigger: portrait,
-              start: "top 90%",
-              once: true,
+        const photo = portrait?.querySelector("img");
+        if (portrait && photo) {
+          const buildPortrait = () => {
+            if (portrait.querySelector(".intro-portrait-build")) return;
+            const width = photo.clientWidth;
+            const height = photo.clientHeight;
+            if (!width || !height) return;
+
+            const cols = 2;
+            const rows = 4;
+            const travel = Math.round(width * 0.62);
+            const layer = document.createElement("div");
+            layer.className = "intro-portrait-build";
+            layer.setAttribute("aria-hidden", "true");
+            layer.style.width = `${width}px`;
+            layer.style.height = `${height}px`;
+
+            const pieces: HTMLImageElement[] = [];
+            for (let row = rows - 1; row >= 0; row -= 1) {
+              for (let col = 0; col < cols; col += 1) {
+                const piece = photo.cloneNode(true) as HTMLImageElement;
+                piece.alt = "";
+                piece.style.clipPath = `inset(${(row / rows) * 100}% ${
+                  ((cols - col - 1) / cols) * 100
+                }% ${((rows - row - 1) / rows) * 100}% ${(col / cols) * 100}%)`;
+                gsap.set(piece, { x: col === 0 ? -travel : travel });
+                layer.appendChild(piece);
+                pieces.push(piece);
+              }
+            }
+
+            portrait.insertBefore(layer, photo);
+            photo.style.visibility = "hidden";
+
+            gsap.to(pieces, {
+              x: 0,
+              duration: 0.72,
+              ease: "back.out(1.45)",
+              stagger: 0.07,
+              onComplete: () => {
+                photo.style.visibility = "";
+                layer.remove();
+              },
+            });
+          };
+
+          ScrollTrigger.create({
+            trigger: portrait,
+            start: "top 86%",
+            once: true,
+            onEnter: () => {
+              if (photo.complete && photo.naturalWidth) buildPortrait();
+              else photo.addEventListener("load", buildPortrait, { once: true });
             },
           });
-          const photo = portrait.querySelector("img");
-          if (photo) {
-            gsap.fromTo(
-              photo,
-              { x: 0 },
-              {
-                x: 12,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: "#about",
-                  start: "top bottom",
-                  end: "bottom top",
-                  scrub: 0.65,
-                },
-              },
-            );
-          }
         }
 
         if (root.querySelector(".statement-word")) {

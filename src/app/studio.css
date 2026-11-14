@@ -653,6 +653,22 @@ a:focus-visible .rolling-label > span {
 
 .intro-portrait {
   margin: 0;
+  position: relative;
+}
+
+.intro-portrait-build {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.intro-portrait-build img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
 }
 
 .intro-portrait img {

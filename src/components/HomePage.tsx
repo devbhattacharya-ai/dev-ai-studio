@@ -175,8 +175,10 @@ export function HomePage() {
               <ArrowUpRight />
             </a>
           </div>
-          <div className="intro-copy reveal">
-            <StatementHeading text={HOME.about.h2} />
+          <div className="intro-copy">
+            <div className="reveal">
+              <StatementHeading text={HOME.about.h2} />
+            </div>
             <div className="intro-aside">
               <figure className="intro-portrait">
                 <Image
@@ -188,7 +190,7 @@ export function HomePage() {
                 />
                 <figcaption className="label">Devroop</figcaption>
               </figure>
-              <p>{HOME.about.body}</p>
+              <p className="reveal">{HOME.about.body}</p>
             </div>
           </div>
         </section>
