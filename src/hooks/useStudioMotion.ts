@@ -94,6 +94,7 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
       };
       gsap.ticker.add(tickerFn);
       gsap.ticker.lagSmoothing(0);
+      gsap.ticker.fps(120);
 
       media = gsap.matchMedia();
 
@@ -283,10 +284,10 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
             .from(bridge.querySelector("p"), { y: 10, opacity: 0, duration: 0.55 }, 0.24);
         }
 
-        const portrait = root.querySelector(".intro-portrait");
-        const photo = portrait?.querySelector("img");
+        const portrait = root.querySelector<HTMLElement>(".intro-portrait");
+        const photo = portrait?.querySelector<HTMLImageElement>(":scope > img");
         if (portrait && photo) {
-          const buildPortrait = () => {
+          const armPortrait = () => {
             if (portrait.querySelector(".intro-portrait-build")) return;
             const width = photo.clientWidth;
             const height = photo.clientHeight;
@@ -294,7 +295,7 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
 
             const cols = 2;
             const rows = 4;
-            const travel = Math.round(width * 0.62);
+            const travel = Math.round(width * 0.85);
             const layer = document.createElement("div");
             layer.className = "intro-portrait-build";
             layer.setAttribute("aria-hidden", "true");
@@ -302,43 +303,64 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
             layer.style.height = `${height}px`;
 
             const pieces: HTMLImageElement[] = [];
-            for (let row = rows - 1; row >= 0; row -= 1) {
+            const fromX: number[] = [];
+            for (let row = 0; row < rows; row += 1) {
               for (let col = 0; col < cols; col += 1) {
                 const piece = photo.cloneNode(true) as HTMLImageElement;
                 piece.alt = "";
-                piece.style.clipPath = `inset(${(row / rows) * 100}% ${
-                  ((cols - col - 1) / cols) * 100
-                }% ${((rows - row - 1) / rows) * 100}% ${(col / cols) * 100}%)`;
-                gsap.set(piece, { x: col === 0 ? -travel : travel });
+                const bleed = 0.8;
+                const top = Math.max(0, (row / rows) * 100 - bleed);
+                const right = Math.max(0, ((cols - col - 1) / cols) * 100 - bleed);
+                const bottom = Math.max(0, ((rows - row - 1) / rows) * 100 - bleed);
+                const left = Math.max(0, (col / cols) * 100 - bleed);
+                piece.style.clipPath = `inset(${top}% ${right}% ${bottom}% ${left}%)`;
+                piece.style.willChange = "transform";
                 layer.appendChild(piece);
                 pieces.push(piece);
+                fromX.push(col === 0 ? -travel : travel);
               }
             }
 
             portrait.insertBefore(layer, photo);
             photo.style.visibility = "hidden";
 
-            gsap.to(pieces, {
-              x: 0,
-              duration: 0.72,
-              ease: "back.out(1.45)",
-              stagger: 0.07,
-              onComplete: () => {
-                photo.style.visibility = "";
-                layer.remove();
+            let locked = false;
+            const showPhoto = () => {
+              photo.style.visibility = "";
+              layer.style.visibility = "hidden";
+            };
+            const showPieces = () => {
+              photo.style.visibility = "hidden";
+              layer.style.visibility = "visible";
+            };
+
+            gsap.fromTo(
+              pieces,
+              { x: (index) => fromX[index], force3D: true },
+              {
+                x: 0,
+                ease: "none",
+                force3D: true,
+                scrollTrigger: {
+                  trigger: portrait,
+                  start: "top bottom",
+                  end: "top 58%",
+                  scrub: true,
+                  invalidateOnRefresh: true,
+                  onUpdate: (self) => {
+                    const done = self.progress > 0.995;
+                    if (done === locked) return;
+                    locked = done;
+                    if (done) showPhoto();
+                    else showPieces();
+                  },
+                },
               },
-            });
+            );
           };
 
-          ScrollTrigger.create({
-            trigger: portrait,
-            start: "top 86%",
-            once: true,
-            onEnter: () => {
-              if (photo.complete && photo.naturalWidth) buildPortrait();
-              else photo.addEventListener("load", buildPortrait, { once: true });
-            },
-          });
+          if (photo.complete && photo.naturalWidth) armPortrait();
+          else photo.addEventListener("load", armPortrait, { once: true });
         }
 
         if (root.querySelector(".statement-word")) {

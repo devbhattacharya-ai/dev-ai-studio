@@ -669,6 +669,8 @@ a:focus-visible .rolling-label > span {
   width: 100%;
   height: 100%;
   max-width: none;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .intro-portrait img {
