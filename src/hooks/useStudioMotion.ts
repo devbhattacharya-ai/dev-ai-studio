@@ -281,20 +281,35 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
 
         const portrait = root.querySelector(".intro-portrait");
         if (portrait) {
-          gsap.fromTo(
-            portrait,
-            { x: 0 },
-            {
-              x: 12,
-              ease: "none",
-              scrollTrigger: {
-                trigger: "#about",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.65,
-              },
+          gsap.from(portrait, {
+            y: 16,
+            opacity: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            clearProps: "opacity,transform",
+            scrollTrigger: {
+              trigger: portrait,
+              start: "top 90%",
+              once: true,
             },
-          );
+          });
+          const photo = portrait.querySelector("img");
+          if (photo) {
+            gsap.fromTo(
+              photo,
+              { x: 0 },
+              {
+                x: 12,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: "#about",
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 0.65,
+                },
+              },
+            );
+          }
         }
 
         if (root.querySelector(".statement-word")) {
