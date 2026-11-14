@@ -279,19 +279,22 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
             .from(bridge.querySelector("p"), { y: 10, opacity: 0, duration: 0.55 }, 0.24);
         }
 
-        const portrait = root.querySelector(".intro-portrait img");
+        const portrait = root.querySelector(".intro-portrait");
         if (portrait) {
-          gsap.from(portrait, {
-            clipPath: "inset(0 0 100% 0)",
-            duration: 1.15,
-            ease: "power3.out",
-            clearProps: "clipPath",
-            scrollTrigger: {
-              trigger: ".intro-portrait",
-              start: "top 88%",
-              once: true,
+          gsap.fromTo(
+            portrait,
+            { x: 0 },
+            {
+              x: 12,
+              ease: "none",
+              scrollTrigger: {
+                trigger: "#about",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.65,
+              },
             },
-          });
+          );
         }
 
         if (root.querySelector(".statement-word")) {
