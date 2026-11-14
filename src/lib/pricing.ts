@@ -5,9 +5,9 @@ import { PRICING_MR } from "./mr-packs";
 export type Currency = "inr" | "usd";
 
 export const WEBSITE_TIERS = [
-  { pages: "01", standard: { inr: 7999, usd: 84 }, animated: { inr: 12999, usd: 137 } },
-  { pages: "03", standard: { inr: 17900, usd: 189 }, animated: { inr: 32900, usd: 347 } },
-  { pages: "05", standard: { inr: 25900, usd: 273 }, animated: { inr: 47900, usd: 505 } },
+  { pages: "01", standard: { inr: 4999, usd: 53 }, animated: { inr: 6999, usd: 74 } },
+  { pages: "03", standard: { inr: 6999, usd: 74 }, animated: { inr: 9999, usd: 105 } },
+  { pages: "05", standard: { inr: 12999, usd: 137 }, animated: { inr: 15999, usd: 169 } },
   { pages: "06+", standard: null, animated: null },
 ] as const;
 
@@ -56,7 +56,7 @@ export const PRICING_COPY = {
   animatedText:
     "A tailored hero and planned scroll moments where motion helps explain the product or service.",
   tableNote:
-    "Starting prices for standard brochure pages. Custom booking systems, commerce, multilingual copy and 3D assets need a separate quote.",
+    "Starting prices for standard brochure pages. The 5-page animated price depends on the animation. Custom booking systems, commerce, multilingual copy and 3D assets need a separate quote.",
   motionLabel: "02 / EXTRA MOTION",
   motionSide: "ADDITIONS / MOTION",
   motionTitle: "One more moment, if it earns its place.",
