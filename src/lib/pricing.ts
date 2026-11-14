@@ -5,9 +5,9 @@ import { PRICING_MR } from "./mr-packs";
 export type Currency = "inr" | "usd";
 
 export const WEBSITE_TIERS = [
-  { pages: "01", standard: { inr: 4999, usd: 53 }, animated: { inr: 6999, usd: 74 } },
-  { pages: "03", standard: { inr: 6999, usd: 74 }, animated: { inr: 9999, usd: 105 } },
-  { pages: "05", standard: { inr: 12999, usd: 137 }, animated: { inr: 15999, usd: 169 } },
+  { pages: "01", standard: { inr: 4999, usd: 70 }, animated: { inr: 6999, usd: 98 } },
+  { pages: "03", standard: { inr: 6999, usd: 98 }, animated: { inr: 9999, usd: 140 } },
+  { pages: "05", standard: { inr: 12999, usd: 182 }, animated: { inr: 15999, usd: 224 } },
   { pages: "06+", standard: null, animated: null },
 ] as const;
 
@@ -162,7 +162,7 @@ export function formatPriceWithProgress(
 }
 
 /**
- * Both currencies visible — e.g. "from ₹7,999 / $84".
+ * Both currencies visible — e.g. "from ₹4,999 / $70".
  * When progress < 1, both sides count up (ranges: both ends × progress).
  * Custom/null: no animation, show custom label.
  */
