@@ -94,7 +94,6 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
       };
       gsap.ticker.add(tickerFn);
       gsap.ticker.lagSmoothing(0);
-      gsap.ticker.fps(120);
 
       media = gsap.matchMedia();
 
@@ -287,80 +286,17 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
         const portrait = root.querySelector<HTMLElement>(".intro-portrait");
         const photo = portrait?.querySelector<HTMLImageElement>(":scope > img");
         if (portrait && photo) {
-          const armPortrait = () => {
-            if (portrait.querySelector(".intro-portrait-build")) return;
-            const width = photo.clientWidth;
-            const height = photo.clientHeight;
-            if (!width || !height) return;
-
-            const cols = 2;
-            const rows = 4;
-            const travel = Math.round(width * 0.85);
-            const layer = document.createElement("div");
-            layer.className = "intro-portrait-build";
-            layer.setAttribute("aria-hidden", "true");
-            layer.style.width = `${width}px`;
-            layer.style.height = `${height}px`;
-
-            const pieces: HTMLImageElement[] = [];
-            const fromX: number[] = [];
-            for (let row = 0; row < rows; row += 1) {
-              for (let col = 0; col < cols; col += 1) {
-                const piece = photo.cloneNode(true) as HTMLImageElement;
-                piece.alt = "";
-                const bleed = 0.8;
-                const top = Math.max(0, (row / rows) * 100 - bleed);
-                const right = Math.max(0, ((cols - col - 1) / cols) * 100 - bleed);
-                const bottom = Math.max(0, ((rows - row - 1) / rows) * 100 - bleed);
-                const left = Math.max(0, (col / cols) * 100 - bleed);
-                piece.style.clipPath = `inset(${top}% ${right}% ${bottom}% ${left}%)`;
-                piece.style.willChange = "transform";
-                layer.appendChild(piece);
-                pieces.push(piece);
-                fromX.push(col === 0 ? -travel : travel);
-              }
-            }
-
-            portrait.insertBefore(layer, photo);
-            photo.style.visibility = "hidden";
-
-            let locked = false;
-            const showPhoto = () => {
-              photo.style.visibility = "";
-              layer.style.visibility = "hidden";
-            };
-            const showPieces = () => {
-              photo.style.visibility = "hidden";
-              layer.style.visibility = "visible";
-            };
-
-            gsap.fromTo(
-              pieces,
-              { x: (index) => fromX[index], force3D: true },
-              {
-                x: 0,
-                ease: "none",
-                force3D: true,
-                scrollTrigger: {
-                  trigger: portrait,
-                  start: "top bottom",
-                  end: "top 58%",
-                  scrub: true,
-                  invalidateOnRefresh: true,
-                  onUpdate: (self) => {
-                    const done = self.progress > 0.995;
-                    if (done === locked) return;
-                    locked = done;
-                    if (done) showPhoto();
-                    else showPieces();
-                  },
-                },
-              },
-            );
-          };
-
-          if (photo.complete && photo.naturalWidth) armPortrait();
-          else photo.addEventListener("load", armPortrait, { once: true });
+          gsap.from(photo, {
+            clipPath: "inset(0 0 100% 0)",
+            duration: 1.1,
+            ease: "power3.out",
+            clearProps: "clipPath",
+            scrollTrigger: {
+              trigger: portrait,
+              start: "top 75%",
+              once: true,
+            },
+          });
         }
 
         if (root.querySelector(".statement-word")) {
