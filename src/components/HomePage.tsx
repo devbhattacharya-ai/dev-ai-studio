@@ -177,7 +177,19 @@ export function HomePage() {
           </div>
           <div className="intro-copy reveal">
             <StatementHeading text={HOME.about.h2} />
-            <p>{HOME.about.body}</p>
+            <div className="intro-aside">
+              <figure className="intro-portrait">
+                <Image
+                  src="/devroop.jpg"
+                  alt="Devroop"
+                  width={862}
+                  height={1040}
+                  sizes="132px"
+                />
+                <figcaption className="label">Devroop</figcaption>
+              </figure>
+              <p>{HOME.about.body}</p>
+            </div>
           </div>
         </section>
 

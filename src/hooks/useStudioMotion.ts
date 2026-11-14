@@ -279,6 +279,21 @@ export function useStudioMotion(rootRef: RefObject<HTMLElement | null>) {
             .from(bridge.querySelector("p"), { y: 10, opacity: 0, duration: 0.55 }, 0.24);
         }
 
+        const portrait = root.querySelector(".intro-portrait img");
+        if (portrait) {
+          gsap.from(portrait, {
+            clipPath: "inset(0 0 100% 0)",
+            duration: 1.15,
+            ease: "power3.out",
+            clearProps: "clipPath",
+            scrollTrigger: {
+              trigger: ".intro-portrait",
+              start: "top 88%",
+              once: true,
+            },
+          });
+        }
+
         if (root.querySelector(".statement-word")) {
           gsap.fromTo(
             ".statement-word",

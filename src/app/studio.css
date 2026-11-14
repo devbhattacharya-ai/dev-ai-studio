@@ -644,6 +644,42 @@ a:focus-visible .rolling-label > span {
   max-width: 600px;
 }
 
+.intro-aside {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 18px 20px;
+  align-items: end;
+}
+
+.intro-portrait {
+  margin: 0;
+}
+
+.intro-portrait img {
+  width: 132px;
+  height: 176px;
+  object-fit: cover;
+  object-position: 62% 12%;
+  display: block;
+}
+
+.intro-portrait figcaption {
+  margin-top: 10px;
+}
+
+@media (width <= 760px) {
+  .intro-aside {
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 14px 16px;
+    align-items: start;
+  }
+
+  .intro-portrait img {
+    width: 108px;
+    height: 144px;
+  }
+}
+
 /* Work */
 .work-heading {
   display: grid;
